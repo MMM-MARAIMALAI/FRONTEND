@@ -40,7 +40,7 @@ export function checkAuth(req, res) {
 // ── CORS ──────────────────────────────────────────────────────────────────
 // Allow the Hostinger frontend + Vercel preview deployments to call the API.
 // Set CORS_ORIGIN env var to a comma-separated list to override.
-const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || 'https://maraimalaimurasu.com,https://www.maraimalaimurasu.com,https://maraimalai-murasu.vercel.app,http://localhost:5173,http://localhost:5174')
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN || 'https://maraimalaimurasu.com,https://www.maraimalaimurasu.com,https://frontend-delta-five-93.vercel.app,http://localhost:5173,http://localhost:5174')
   .split(',')
   .map(s => s.trim())
   .filter(Boolean);
