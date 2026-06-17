@@ -121,7 +121,7 @@ table { max-width: 100%; }
   }
   .masthead .edition-meta { justify-self: end; }
   .masthead .masthead-ad-left { justify-self: start !important; align-items: flex-start !important; }
-  .masthead .edition-meta .ad-slot { max-width: 250px !important; }
+  .masthead .edition-meta .ad-slot { max-width: 190px !important; }
   .brand h1 { font-size: clamp(40px, 4.5vw, 56px) !important; line-height: 1.05 !important; }
 
   /* ---------- Primary nav — keep horizontal, tighten paddings ---------- */

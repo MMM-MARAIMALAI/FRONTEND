@@ -132,7 +132,7 @@ export function Masthead() {
       <div className="masthead-inner">
         {/* LEFT — mirrors the right-side ad. Was the Chennai weather widget. */}
         <div className="edition-meta masthead-ad-left" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px' }}>
-          <AdSlot network="google" size="250x250" slotId="header-left-sq" note="Google AdSense · Square" style={{ width: '250px' }} />
+          <AdSlot network="google" size="250x250" slotId="header-left-sq" note="Google AdSense · Square" style={{ width: '190px' }} />
         </div>
         <div className="brand">
           <div className="ornament">
@@ -141,13 +141,13 @@ export function Masthead() {
             <span className="line"></span>
           </div>
           <a href="/" style={{ display: "inline-block" }}>
-            <img src={logoSrc} alt="மறைமலை முரசு" style={{ maxWidth: "520px", width: "100%", height: "auto", display: "block", margin: "0 auto" }} />
+            <img src={logoSrc} alt="மறைமலை முரசு" style={{ maxWidth: "680px", width: "100%", height: "auto", display: "block", margin: "0 auto" }} />
           </a>
 
         </div>
         {/* RIGHT — unchanged 250x250 ad slot */}
         <div className="edition-meta" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '16px' }}>
-          <AdSlot network="google" size="250x250" slotId="header-right-sq" note="Google AdSense · Square" style={{ width: '250px' }} />
+          <AdSlot network="google" size="250x250" slotId="header-right-sq" note="Google AdSense · Square" style={{ width: '190px' }} />
         </div>
       </div>
     </div>
