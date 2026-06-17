@@ -51,10 +51,14 @@ export async function savePdfBlob(file) {
       handleUploadUrl: '/api/blob-upload',
       clientPayload: JSON.stringify({ token }),
     });
+    if (!result || !result.url) throw new Error('Blob upload returned no URL');
     return result.url; // public https URL — stored server-side, served to all visitors
   } catch (err) {
-    console.error('Blob upload failed, falling back to IndexedDB:', err);
-    return saveToIndexedDb(file);
+    // Do NOT silently fall back to IndexedDB — that "works" only on the
+    // uploader's browser and hides the real problem. Surface the error so the
+    // admin sees exactly why the server upload failed.
+    console.error('Blob upload failed:', err);
+    throw new Error('Blob upload failed — ' + (err && err.message ? err.message : String(err)));
   }
 }
 
