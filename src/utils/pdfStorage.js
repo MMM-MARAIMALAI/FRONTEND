@@ -1,5 +1,7 @@
-// Large PDF storage using IndexedDB (supports much larger files than localStorage)
-// Used by admin (save PDFs) and website (open PDFs)
+// PDF storage.
+// Primary: Vercel Blob (server-side, public URL — works for every visitor/device).
+// Fallback: IndexedDB (browser-local) only if the Blob upload fails.
+import { upload } from '@vercel/blob/client';
 
 const DB_NAME = 'murasu-pdf-storage';
 const DB_VERSION = 1;
@@ -23,17 +25,37 @@ function openDb() {
   });
 }
 
-// Save a File or Blob to IndexedDB, returns a key string like "idb:abc123"
-export async function savePdfBlob(file) {
-  if (!file) throw new Error('No file provided');
-  const db = await openDb();
-  const key = 'pdf-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
-  return new Promise((resolve, reject) => {
+// Internal: save a File/Blob to browser IndexedDB, returns "idb:<key>"
+function saveToIndexedDb(file) {
+  return openDb().then((db) => new Promise((resolve, reject) => {
+    const key = 'pdf-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
     const tx = db.transaction(STORE_NAME, 'readwrite');
     tx.objectStore(STORE_NAME).put(file, key);
     tx.oncomplete = () => resolve('idb:' + key);
     tx.onerror = () => reject(tx.error);
-  });
+  }));
+}
+
+// Save a PDF. Uploads to Vercel Blob and returns a public https URL that any
+// visitor on any device can open. Falls back to browser IndexedDB only if the
+// upload fails (e.g. local dev with no Blob token).
+export async function savePdfBlob(file) {
+  if (!file) throw new Error('No file provided');
+  try {
+    const token = import.meta.env.VITE_ADS_API_TOKEN || 'maraimalai-murasu-2026';
+    const safeName = (file.name || 'newspaper.pdf').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const pathname = `epaper/${Date.now()}-${safeName}`;
+    const result = await upload(pathname, file, {
+      access: 'public',
+      contentType: file.type || 'application/pdf',
+      handleUploadUrl: '/api/blob-upload',
+      clientPayload: JSON.stringify({ token }),
+    });
+    return result.url; // public https URL — stored server-side, served to all visitors
+  } catch (err) {
+    console.error('Blob upload failed, falling back to IndexedDB:', err);
+    return saveToIndexedDb(file);
+  }
 }
 
 // Convert any pdf value (URL, data:base64, or idb:key) to a usable URL
