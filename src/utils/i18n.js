@@ -52,6 +52,7 @@ export const translations = {
   navBeauty:        { ta: 'அழகுகுறிப்பு',        en: 'Beauty' },
   navCooking:       { ta: 'சமையல்',              en: 'Cooking' },
   navContact:       { ta: 'தொடர்பு',             en: 'Contact' },
+  navAdvertise:     { ta: 'விளம்பரம்',           en: 'Advertise' },
   navSearch:        { ta: 'தேடுங்கள்...',        en: 'Search...' },
 
   // ── Common UI ──

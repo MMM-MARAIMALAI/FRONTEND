@@ -15,6 +15,12 @@ export default function LawPage() {
       { num: '12', label: 'நீதிமன்றம்' },
       { num: '100%', label: 'உண்மை தகவல்' }
     ],
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      featured: true, secondary: true, midAd: true, liveStream: true,
+      sidebarAd1: true, mostRead: true, opinion: true,
+      sidebarAd2: true, sidebarAd3: true, sidebarAd4: true
+    },
     featured: {
       cat: 'நீதிமன்றம்',
       img: '/img/crime-scene.avif',
@@ -82,6 +88,8 @@ export default function LawPage() {
     return () => window.removeEventListener('storage', onChange);
   }, []);
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
   const featured = pc.featured;
   const stats = pc.stats || [];
   const secondary = pc.secondary || [];
@@ -118,6 +126,7 @@ export default function LawPage() {
         {/* LEFT CONTENT */}
         <div className="law-main">
           {/* HERO */}
+          {isOn('featured') && (
           <div className="law-hero">
             <a href={resolveLink(featured, '/article')} className="law-hero-image">
               <img src={featured.img} alt={featured.title} />
@@ -133,8 +142,10 @@ export default function LawPage() {
               <div className="law-meta">{featured.meta}</div>
             </div>
           </div>
+          )}
 
           {/* SECONDARY NEWS */}
+          {isOn('secondary') && (
           <div className="law-secondary">
             {secondary.map((article, idx) => (
               <a
@@ -152,13 +163,18 @@ export default function LawPage() {
               </a>
             ))}
           </div>
+          )}
 
           {/* ADVERTISEMENT */}
+          {isOn('midAd') && (
           <div className="law-ad-wrapper">
             <AdSlot network="google" size="970x250" slotId="law-mid-ad" note="Google AdSense · Billboard" />
           </div>
+          )}
 
-          {/* SECTION HEAD */}
+          {/* SECTION HEAD + STREAM */}
+          {isOn('liveStream') && (
+          <>
           <div className="law-section-head">
             <h2>
               {pc.sectionHead}
@@ -186,14 +202,19 @@ export default function LawPage() {
             </ul>
             <button className="law-loadmore">{pc.loadMore}</button>
           </div>
+          </>
+          )}
         </div>
 
         {/* SIDEBAR */}
         <aside className="law-sidebar">
           {/* SIDE AD — uses per-slot image from Ad Manager */}
+          {isOn('sidebarAd1') && (
           <AdSlot network="google" size="300x600" slotId="law-sidebar-1" note="Google Ad Manager · Half Page" style={{ maxWidth: '100%' }} />
+          )}
 
           {/* MOST READ */}
+          {isOn('mostRead') && (
           <div className="law-sidebar-block">
             <div className="law-sidebar-head">{pc.mostReadHead}</div>
             <ol className="law-most-read">
@@ -206,8 +227,10 @@ export default function LawPage() {
               ))}
             </ol>
           </div>
+          )}
 
           {/* OPINION */}
+          {isOn('opinion') && (
           <div className="law-sidebar-block">
             <div className="law-sidebar-head">{pc.opinionHead}</div>
             <ul className="law-opinion">
@@ -220,18 +243,27 @@ export default function LawPage() {
               ))}
             </ul>
           </div>
+          )}
 
           {/* SECONDARY SIDEBAR AD — fills empty space below opinion block */}
+          {isOn('sidebarAd2') && (
           <AdSlot network="google" size="300x250" slotId="law-sidebar-2" note="Google AdSense · Rectangle" style={{ maxWidth: '100%' }} />
+          )}
 
           {/* TERTIARY SIDEBAR AD — bottom sticky ad */}
+          {isOn('sidebarAd3') && (
           <AdSlot network="meta" size="300x600" slotId="law-sidebar-3" note="Meta Audience Network · Half Page" style={{ maxWidth: '100%' }} />
+          )}
 
           {/* NEW AD #4 — beside நேரடி சட்ட செய்திகள் section (compact square — matches header ad size) */}
+          {isOn('sidebarAd4') && (
+          <>
           <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px', marginTop: '20px' }}>
             ஆதரவாளர் விளம்பரம்
           </div>
           <AdSlot network="sponsor" size="300x250" slotId="law-sidebar-4" note="Rectangle · 300 × 250" style={{ maxWidth: '100%' }} />
+          </>
+          )}
         </aside>
       </div>
     </div>

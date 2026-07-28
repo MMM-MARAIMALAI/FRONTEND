@@ -23,6 +23,11 @@ export default function AstrologyPage() {
   const pc = usePageContent('astrology', {
     title: 'ஜோதிடம்',
     subtitle: 'ராசிபலன், பஞ்சாங்கம் மற்றும் ஆன்மீக செய்திகள்',
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      panchangam: true, inlineAd1: true, rasi: true, inlineAd2: true,
+      spiritual: true, sidebar: true, sidebarAd: true
+    },
     panchangamHead: 'இன்றைய பஞ்சாங்கம்',
     panchangam: {
       date: '12 மே 2026, செவ்வாய்க்கிழமை',
@@ -73,6 +78,8 @@ export default function AstrologyPage() {
     return () => window.removeEventListener('storage', onChange);
   }, []);
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
   const rasi = pc.rasi || DEFAULT_RASI;
   const sidebarItems = pc.sidebarItems || [];
   const spiritualArticles = [...extraSpiritual, ...(pc.spiritualArticles || [])];
@@ -140,6 +147,7 @@ export default function AstrologyPage() {
           <div className="astrology-main">
 
             {/* Panchangam Section */}
+            {isOn('panchangam') && (
             <section className="panchangam-section">
               <div className="panchangam-box">
                 <div className="panchangam-header">
@@ -174,16 +182,20 @@ export default function AstrologyPage() {
                 </div>
               </div>
             </section>
+            )}
 
             {/* INLINE AD #1 — between Panchangam and Rasi */}
+            {isOn('inlineAd1') && (
             <div style={{ margin: '20px 0' }}>
               <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px' }}>
                 விளம்பரம் · SPONSORED
               </div>
               <AdSlot network="sponsor" size="970x350" slotId="astro-inline-1" note="In-feed Billboard · 970 × 350" style={{ maxWidth: '100%' }} />
             </div>
+            )}
 
             {/* Rasi Palan Grid — admin-editable, with optional PDF per rasi */}
+            {isOn('rasi') && (
             <section className="section rasi-section">
               <div className="section-head">
                 <h2>{pc.rasiSectionHead}</h2>
@@ -205,16 +217,20 @@ export default function AstrologyPage() {
                 ))}
               </div>
             </section>
+            )}
 
             {/* INLINE AD #2 — between Rasi and Spiritual articles */}
+            {isOn('inlineAd2') && (
             <div style={{ margin: '24px 0' }}>
               <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px' }}>
                 விளம்பரம் · SPONSORED
               </div>
               <AdSlot network="sponsor" size="970x350" slotId="astro-inline-2" note="In-feed Billboard · 970 × 350" style={{ maxWidth: '100%' }} />
             </div>
+            )}
 
             {/* Spiritual Articles */}
+            {isOn('spiritual') && (
             <section className="section spiritual-articles">
               <div className="section-head">
                 <h2>{pc.spiritualHead}</h2>
@@ -238,12 +254,14 @@ export default function AstrologyPage() {
                 ))}
               </div>
             </section>
+            )}
 
           </div>
           {/* End astrology-main */}
 
           <aside className="astrology-sidebar">
             {/* Sidebar Widget — Featured News */}
+            {isOn('sidebar') && (
             <div className="sidebar-widget">
               <div className="widget-head">
                 <h3>{pc.sidebarHead}</h3>
@@ -257,7 +275,10 @@ export default function AstrologyPage() {
                 ))}
               </div>
             </div>
+            )}
 
+            {isOn('sidebarAd') && (
+            <>
             <div className="sticky-ad">
               <AdSlot network="google" size="300x600" slotId="astro-sidebar" note="Google Ad Manager · Half Page" />
             </div>
@@ -277,6 +298,8 @@ export default function AstrologyPage() {
               </div>
               <AdSlot network="sponsor" size="300x250" slotId="astro-sidebar-3" note="MPU · 300 × 250" style={{ maxWidth: '100%' }} />
             </div>
+            </>
+            )}
           </aside>
 
         </div>

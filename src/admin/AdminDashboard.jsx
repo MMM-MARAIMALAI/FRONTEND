@@ -1863,6 +1863,43 @@ export default function AdminDashboard({ onLogout }) {
               </div>
             </div>
 
+            {/* ===== SECTION VISIBILITY — show / hide homepage sections ===== */}
+            {(() => {
+              const HOME_SECTIONS = [
+                { key: 'weeklyEdition', label: 'Weekly Edition PDF banner' },
+                { key: 'hero', label: 'Hero (lead video + side cards)' },
+                { key: 'topStories', label: 'Top Stories grid' },
+                { key: 'electionBanner', label: 'Election banner' },
+                { key: 'electionCoverage', label: 'Election coverage grid' },
+                { key: 'stateNational', label: 'Tamil Nadu & National (two-column)' }
+              ];
+              const secs = homeContent.sections || {};
+              const on = (k) => secs[k] !== false;
+              const toggle = (k) => setHomeContent(prev => ({ ...prev, sections: { ...(prev.sections || {}), [k]: !((prev.sections || {})[k] !== false) } }));
+              const setAll = (val) => setHomeContent(prev => { const next = { ...(prev.sections || {}) }; HOME_SECTIONS.forEach(s => { next[s.key] = val; }); return { ...prev, sections: next }; });
+              return (
+                <div style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '18px 22px', marginBottom: '32px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
+                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#111827' }}>👁 Section Visibility — show / hide homepage sections</h3>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button type="button" onClick={() => setAll(true)} style={{ padding: '6px 12px', background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#059669', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Show all</button>
+                      <button type="button" onClick={() => setAll(false)} style={{ padding: '6px 12px', background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#EF4444', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Hide all</button>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px' }}>
+                    {HOME_SECTIONS.map(s => (
+                      <label key={s.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', border: `1px solid ${on(s.key) ? '#A7F3D0' : '#FCA5A5'}`, background: on(s.key) ? '#F0FDF4' : '#FEF2F2', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}>
+                        <input type="checkbox" checked={on(s.key)} onChange={() => toggle(s.key)} />
+                        <span style={{ fontWeight: 600, color: '#374151' }}>{s.label}</span>
+                        <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 700, color: on(s.key) ? '#059669' : '#EF4444' }}>{on(s.key) ? 'SHOWN' : 'HIDDEN'}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <p style={{ margin: '10px 0 0', fontSize: '12px', color: '#6B7280' }}>Unchecked sections are removed from the live homepage. Click "Save Home Page" above to apply.</p>
+                </div>
+              );
+            })()}
+
             {/* ===== WEEKLY EDITION PDF ===== */}
             <div style={{ background: '#fff', padding: '32px', borderRadius: '16px', border: '2px solid var(--accent)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', marginBottom: '32px' }}>
               <h3 style={{ fontSize: '18px', margin: '0 0 8px 0', color: '#111827', fontWeight: '700' }}>📰 Weekly Edition PDF (இந்த வார இதழ்)</h3>
@@ -2374,9 +2411,79 @@ export default function AdminDashboard({ onLogout }) {
           { id: 'article', label: 'Article · கட்டுரை' },
           { id: 'epaper', label: 'ePaper · இ-பேப்பர்' },
           { id: 'contact', label: 'Contact · தொடர்பு' },
-          { id: 'subscription', label: 'Subscription · சந்தா' }
+          { id: 'subscription', label: 'Subscription · சந்தா' },
+          { id: 'advertise', label: 'Advertise · விளம்பரம்' }
         ];
         const page = pagesContent[activePage] || {};
+
+        // Registry of toggleable sections per page. Sports / Cooking / Beauty /
+        // ePaper / Advertise have their own inline section toggles in their
+        // editors, so they are intentionally NOT listed here.
+        const PAGE_SECTIONS = {
+          headlines: [
+            { key: 'featured', label: 'Featured hero' }, { key: 'secondary', label: 'Secondary cards' },
+            { key: 'inlineAd2', label: 'Inline ad (after secondary)' }, { key: 'newsletterMain', label: 'Main newsletter banner' },
+            { key: 'leaderboard', label: 'Leaderboard ad' }, { key: 'stream', label: 'Live news stream' },
+            { key: 'midAd', label: 'Mid ad' }, { key: 'inlineAd3', label: 'Inline ad (after mid)' },
+            { key: 'photoStory', label: 'Photo story' }, { key: 'bottomCta', label: 'Bottom advertise CTA' },
+            { key: 'mostRead', label: 'Most read (sidebar)' }, { key: 'opinion', label: 'Opinion / editorial (sidebar)' },
+            { key: 'markets', label: 'Markets summary (sidebar)' }, { key: 'railNewsletter', label: 'Sidebar newsletter' },
+            { key: 'sidebarAds', label: 'Sidebar ads' }
+          ],
+          cinema: [
+            { key: 'featured', label: 'Featured hero' }, { key: 'midAd', label: 'Mid leaderboard ad' },
+            { key: 'newsGrid', label: 'Cinema news grid' }, { key: 'reviews', label: 'Film reviews' },
+            { key: 'popular', label: 'Popular people today' }, { key: 'inlineAd1', label: 'Inline ad 1' },
+            { key: 'samsungBanner', label: 'Samsung banner' }, { key: 'videoNews', label: 'Video news' },
+            { key: 'boxOffice', label: 'Box office table' }, { key: 'inlineAd2', label: 'Inline ad 2' },
+            { key: 'photoGallery', label: 'Photo gallery' }, { key: 'bottomCta', label: 'Bottom CTA' },
+            { key: 'sidebarTrending', label: 'Sidebar trending' }, { key: 'sidebarAd', label: 'Sidebar ad 300x600' },
+            { key: 'sidebarOtt', label: 'Sidebar OTT releases' }, { key: 'sidebarExtraAds', label: 'Sidebar extra ads' },
+            { key: 'sidebarVideoAd', label: 'Sidebar video ad' }, { key: 'sidebarBoxOfficeAd', label: 'Sidebar box office ad' },
+            { key: 'sidebarPhotoAd', label: 'Sidebar photo ad' }
+          ],
+          law: [
+            { key: 'featured', label: 'Featured hero' }, { key: 'secondary', label: 'Secondary cards' },
+            { key: 'midAd', label: 'Mid billboard ad' }, { key: 'liveStream', label: 'Live law-news stream' },
+            { key: 'sidebarAd1', label: 'Sidebar ad 1 (half page)' }, { key: 'mostRead', label: 'Most read block' },
+            { key: 'opinion', label: 'Opinion block' }, { key: 'sidebarAd2', label: 'Sidebar ad 2 (rectangle)' },
+            { key: 'sidebarAd3', label: 'Sidebar ad 3 (half page)' }, { key: 'sidebarAd4', label: 'Sidebar ad 4 (rectangle)' }
+          ],
+          astrology: [
+            { key: 'panchangam', label: 'Panchangam almanac' }, { key: 'inlineAd1', label: 'Inline ad (after panchangam)' },
+            { key: 'rasi', label: 'Rasi predictions grid' }, { key: 'inlineAd2', label: 'Inline ad (after rasi)' },
+            { key: 'spiritual', label: 'Spiritual articles' }, { key: 'sidebar', label: 'Sidebar special topics' },
+            { key: 'sidebarAd', label: 'Sidebar ads' }
+          ],
+          spiritual: [
+            { key: 'featured', label: 'Featured hero' }, { key: 'categories', label: 'Sub-category tiles' },
+            { key: 'panchangam', label: 'Mini panchangam summary' }, { key: 'midAd', label: 'Mid inline ad' },
+            { key: 'articles', label: 'Articles list' }, { key: 'bottomCta', label: 'Bottom CTA' },
+            { key: 'sidebar', label: 'Sidebar special topics' }, { key: 'sidebarAd', label: 'Sidebar ads' }
+          ],
+          more: [
+            { key: 'featured', label: 'Featured hero' }, { key: 'categories', label: 'Sub-category tiles' },
+            { key: 'inlineAd', label: 'In-feed ad banner' }, { key: 'articles', label: 'Articles list' },
+            { key: 'bottomCta', label: 'Bottom advertise CTA' }, { key: 'sidebar', label: 'Sidebar special topics' },
+            { key: 'sidebarAds', label: 'Sidebar ads' }
+          ],
+          article: [
+            { key: 'breadcrumb', label: 'Breadcrumb' }, { key: 'header', label: 'Article header' },
+            { key: 'featuredMedia', label: 'Featured media image' }, { key: 'body', label: 'Article body' },
+            { key: 'pullQuote', label: 'Pull quote' }, { key: 'tags', label: 'Tags' },
+            { key: 'related', label: 'Related stories' }
+          ],
+          contact: [
+            { key: 'hero', label: 'Hero' }, { key: 'contactInfo', label: 'Contact info cards' },
+            { key: 'contactForm', label: 'Contact form' }, { key: 'quickLinks', label: 'Quick links' }
+          ],
+          subscription: [
+            { key: 'hero', label: 'Hero banner' }, { key: 'pricing', label: 'Pricing cards' },
+            { key: 'delivery', label: 'Delivery description' }, { key: 'benefits', label: 'Benefits grid' },
+            { key: 'gpay', label: 'GPay payment block' }, { key: 'contact', label: 'Contact and address' },
+            { key: 'bottomCta', label: 'Bottom call to action' }
+          ]
+        };
 
         return (
           <div style={{ maxWidth: '1100px', animation: 'fadeIn 0.3s ease-in-out' }}>
@@ -2410,6 +2517,39 @@ export default function AdminDashboard({ onLogout }) {
                 </button>
               ))}
             </div>
+
+            {/* ===== SECTION VISIBILITY — per-page Show / Hide toggles ===== */}
+            {PAGE_SECTIONS[activePage] && (() => {
+              const secs = (pagesContent[activePage] || {}).sections || {};
+              const on = (k) => secs[k] !== false;
+              const toggle = (k) => updatePage(activePage, 'sections', { ...secs, [k]: !on(k) });
+              const setAll = (val) => {
+                const next = { ...secs };
+                PAGE_SECTIONS[activePage].forEach(s => { next[s.key] = val; });
+                updatePage(activePage, 'sections', next);
+              };
+              return (
+                <div style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '18px 22px', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
+                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#111827' }}>👁 Section Visibility — show / hide sections on this page</h3>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button type="button" onClick={() => setAll(true)} style={{ padding: '6px 12px', background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#059669', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Show all</button>
+                      <button type="button" onClick={() => setAll(false)} style={{ padding: '6px 12px', background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#EF4444', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Hide all</button>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px' }}>
+                    {PAGE_SECTIONS[activePage].map(s => (
+                      <label key={s.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', border: `1px solid ${on(s.key) ? '#A7F3D0' : '#FCA5A5'}`, background: on(s.key) ? '#F0FDF4' : '#FEF2F2', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' }}>
+                        <input type="checkbox" checked={on(s.key)} onChange={() => toggle(s.key)} />
+                        <span style={{ fontWeight: 600, color: '#374151' }}>{s.label}</span>
+                        <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 700, color: on(s.key) ? '#059669' : '#EF4444' }}>{on(s.key) ? 'SHOWN' : 'HIDDEN'}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <p style={{ margin: '10px 0 0', fontSize: '12px', color: '#6B7280' }}>Unchecked sections are removed from the live page. Click 💾 Save All Page Content to apply.</p>
+                </div>
+              );
+            })()}
 
             {/* ===== HEADLINES PAGE ===== */}
             {activePage === 'headlines' && (() => {
@@ -4922,13 +5062,13 @@ export default function AdminDashboard({ onLogout }) {
                       <button type="button" onClick={addPaper} style={{ padding: '7px 14px', background: '#fff', color: 'var(--accent)', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>+ Add Edition</button>
                     </div>
 
-                    {(epaper.papers || []).map((p, i) => (
-                      <div key={i} style={{ padding: '16px', background: p.pdfKey ? '#F0FDF4' : '#F9FAFB', borderRadius: '8px', border: `1px solid ${p.pdfKey ? '#86EFAC' : '#E5E7EB'}`, marginBottom: '12px' }}>
+                    {(epaper.papers || []).map((p, i) => { const hasPdf = !!(p.pdfKey || (p.pdfUrl && String(p.pdfUrl).trim())); return (
+                      <div key={i} style={{ padding: '16px', background: hasPdf ? '#F0FDF4' : '#F9FAFB', borderRadius: '8px', border: `1px solid ${hasPdf ? '#86EFAC' : '#E5E7EB'}`, marginBottom: '12px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--accent)', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>{i + 1}</span>
                             <strong style={{ fontSize: '13px', color: '#111827' }}>{p.title || 'Untitled Edition'}</strong>
-                            {p.pdfKey && <span style={{ fontSize: '10px', padding: '2px 8px', background: '#059669', color: '#fff', borderRadius: '3px', fontWeight: 700 }}>✓ PDF UPLOADED</span>}
+                            {hasPdf && <span style={{ fontSize: '10px', padding: '2px 8px', background: '#059669', color: '#fff', borderRadius: '3px', fontWeight: 700 }}>✓ PDF READY</span>}
                           </div>
                           <button type="button" onClick={() => removePaper(i)} style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', cursor: 'pointer', fontSize: '11px', padding: '5px 10px', borderRadius: '4px', fontWeight: '700' }}>✕ Remove Edition</button>
                         </div>
@@ -4967,9 +5107,21 @@ export default function AdminDashboard({ onLogout }) {
                               <input type="file" accept="application/pdf" style={{ display: 'none' }} onChange={(e) => { if (e.target.files[0]) uploadPaperPdf(i, e.target.files[0]); }} />
                             </label>
                           </div>
+                          {/* Google Drive PDF link — takes priority over an uploaded file */}
+                          <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #E5E7EB' }}>
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, color: '#1A73E8' }}>🔗 Or paste a Google Drive PDF link (best for large newspapers)</label>
+                            <input type="text" defaultValue={p.pdfUrl || ''} onBlur={(e) => updPaper(i, 'pdfUrl', e.target.value.trim())} placeholder="https://drive.google.com/file/d/FILE_ID/view?usp=sharing" style={{ ...inputStyle, fontSize: '12px', padding: '7px 10px' }} />
+                            <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#6B7280' }}>Set the Drive file to <strong>"Anyone with the link can view"</strong>, then paste the share link. A Drive link takes priority over an uploaded file.</p>
+                            {p.pdfUrl && String(p.pdfUrl).trim() && (
+                              <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '11px', color: '#059669', fontWeight: 700 }}>✓ Drive link set</span>
+                                <button type="button" onClick={() => updPaper(i, 'pdfUrl', '')} style={{ padding: '4px 10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', cursor: 'pointer', fontSize: '11px', borderRadius: '4px', fontWeight: 700 }}>Remove link</button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    ))}
+                    ); })}
 
                     <button type="button" onClick={addPaper} style={{ width: '100%', padding: '14px', background: '#fff', color: 'var(--accent)', border: '2px dashed var(--accent)', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', marginTop: '6px' }}>+ Add another Weekly Edition</button>
                   </SectionBlock>
@@ -5543,6 +5695,185 @@ export default function AdminDashboard({ onLogout }) {
 
                     <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, color: '#374151' }}>Phone Number (clickable on mobile)</label>
                     <input type="text" value={sub.phoneNumber || ''} onChange={(e) => upd('phoneNumber', e.target.value)} placeholder="94441 12294" style={{ ...inputStyle, fontSize: '18px', fontWeight: 700, padding: '10px 12px', letterSpacing: '0.03em' }} />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ===== ADVERTISE PAGE (விளம்பரம்) ===== */}
+            {activePage === 'advertise' && (() => {
+              const AD_DEFAULTS = {
+                eyebrow: 'ADVERTISE WITH US · விளம்பரம்',
+                title: 'விளம்பரம்',
+                subtitle: 'உங்கள் பிராண்டை 14 லட்சம் வாசகர்களுக்கு கொண்டு செல்லுங்கள் — print, digital மற்றும் newsletter ஆகிய மூன்று தளங்களிலும்.',
+                sections: { hero: true, intro: true, packages: true, adBoxes: true, contactCta: true },
+                introHead: 'ஏன் மறைமலை முரசில் விளம்பரம்?',
+                intro: 'Google Ads, Meta Audience Network வழியாக programmatic விளம்பரங்கள் — அல்லது நேரடி ஆதரவாளர் ஒப்பந்தங்கள்.',
+                networks: ['Google AdSense', 'Google Ad Manager', 'Meta Audience Network', 'Direct Sponsorship', 'Newsletter'],
+                packagesHead: 'விளம்பர திட்டங்கள் · Packages',
+                packages: [
+                  { name: 'Top Billboard', size: '970 × 350', price: 'ரூ. 15,000 / வாரம்', desc: 'ஒவ்வொரு பக்கத்தின் மேற்பகுதியில்.' },
+                  { name: 'Sidebar Half Page', size: '300 × 600', price: 'ரூ. 8,000 / வாரம்', desc: 'செய்தி பக்கங்களின் பக்கப்பட்டியில்.' },
+                  { name: 'In-feed Rectangle', size: '300 × 250', price: 'ரூ. 5,000 / வாரம்', desc: 'செய்திகளுக்கு இடையே.' }
+                ],
+                adBoxesHead: 'விளம்பர இடங்கள் · Ad Boxes',
+                adBoxes: [
+                  { id: 'advertise-box-1', size: '970x350', network: 'sponsor', label: 'Top Billboard · 970 × 350', enabled: true },
+                  { id: 'advertise-box-2', size: '300x250', network: 'google', label: 'Rectangle · 300 × 250', enabled: true },
+                  { id: 'advertise-box-3', size: '300x250', network: 'meta', label: 'Rectangle · 300 × 250', enabled: true },
+                  { id: 'advertise-box-4', size: '728x120', network: 'google', label: 'In-feed Strip · 728 × 120', enabled: true }
+                ],
+                contactCta: {
+                  title: 'உங்கள் வணிகம் — மறைமலை முரசு வாசகர்களை சென்றடையுங்கள்',
+                  subtitle: 'தினசரி 14 லட்சம் வாசகர்கள் · 6 பதிப்புகள் · அனைத்து பகுதிகளிலும்',
+                  cta: 'விளம்பர திட்டங்கள் →', ctaHref: 'mailto:ads@maraimalaimurasu.com'
+                }
+              };
+              const ad = { ...AD_DEFAULTS, ...(pagesContent.advertise || {}) };
+              const upd = (field, val) => updatePage('advertise', field, val);
+              const secOn = (key) => ((ad.sections || {})[key] !== false);
+              const toggleSec = (key) => upd('sections', { ...(ad.sections || {}), [key]: !secOn(key) });
+
+              const boxes = ad.adBoxes || [];
+              const updBox = (i, f, v) => upd('adBoxes', boxes.map((b, idx) => idx === i ? { ...b, [f]: v } : b));
+              const addBox = () => upd('adBoxes', [...boxes, { id: `advertise-box-${boxes.length + 1}`, size: '300x250', network: 'sponsor', label: 'Rectangle · 300 × 250', enabled: true }]);
+              const removeBox = (i) => upd('adBoxes', boxes.filter((_, idx) => idx !== i));
+
+              const packs = ad.packages || [];
+              const updPack = (i, f, v) => upd('packages', packs.map((p, idx) => idx === i ? { ...p, [f]: v } : p));
+              const addPack = () => upd('packages', [...packs, { name: 'New Package', size: '300 × 250', price: 'ரூ. 5,000 / வாரம்', desc: '' }]);
+              const removePack = (i) => upd('packages', packs.filter((_, idx) => idx !== i));
+
+              const cta = ad.contactCta || {};
+              const updCta = (f, v) => upd('contactCta', { ...cta, [f]: v });
+
+              const lbl = { display: 'block', marginBottom: '6px', fontWeight: 600, color: '#374151', fontSize: '13px' };
+              const cardStyle = (key) => ({ background: '#fff', padding: '20px 28px 24px', borderRadius: '16px', border: `1px solid ${secOn(key) ? '#E5E7EB' : '#FCA5A5'}`, marginBottom: '20px', opacity: secOn(key) ? 1 : 0.6 });
+              const secHeader = (key, icon, title) => (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: secOn(key) ? '14px' : 0, paddingBottom: secOn(key) ? '12px' : 0, borderBottom: secOn(key) ? '1px solid #F3F4F6' : 'none' }}>
+                  <h3 style={{ fontSize: '17px', margin: 0, color: '#111827', fontWeight: 700 }}>{icon} {title}</h3>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: secOn(key) ? '#059669' : '#EF4444', fontWeight: 700, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={secOn(key)} onChange={() => toggleSec(key)} />
+                    {secOn(key) ? 'SHOWN' : 'HIDDEN'}
+                  </label>
+                </div>
+              );
+
+              return (
+                <div>
+                  <div style={{ background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: '10px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#92400E' }}>
+                    📢 <strong>Advertise page editor</strong> — Manages <code>/advertise</code> (விளம்பரம், linked in the top nav + footer). Toggle any section, and <strong>add / remove ad boxes based on need</strong>.
+                  </div>
+
+                  {/* HERO */}
+                  <div style={cardStyle('hero')}>
+                    {secHeader('hero', '🎯', 'Hero Banner (dark, top of page)')}
+                    {secOn('hero') && (<>
+                      <label style={lbl}>Eyebrow (small red label)</label>
+                      <input type="text" value={ad.eyebrow || ''} onChange={(e) => upd('eyebrow', e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} placeholder="ADVERTISE WITH US · விளம்பரம்" />
+                      <label style={lbl}>Page Title</label>
+                      <input type="text" value={ad.title || ''} onChange={(e) => upd('title', e.target.value)} style={{ ...inputStyle, fontSize: '17px', fontWeight: 700, marginBottom: '12px' }} placeholder="விளம்பரம்" />
+                      <label style={lbl}>Subtitle</label>
+                      <textarea rows="2" value={ad.subtitle || ''} onChange={(e) => upd('subtitle', e.target.value)} style={{ ...inputStyle, resize: 'vertical' }} placeholder="..." />
+                    </>)}
+                  </div>
+
+                  {/* INTRO */}
+                  <div style={cardStyle('intro')}>
+                    {secHeader('intro', '📝', 'Intro — Why Advertise')}
+                    {secOn('intro') && (<>
+                      <label style={lbl}>Heading</label>
+                      <input type="text" value={ad.introHead || ''} onChange={(e) => upd('introHead', e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} placeholder="ஏன் மறைமலை முரசில் விளம்பரம்?" />
+                      <label style={lbl}>Paragraph</label>
+                      <textarea rows="3" value={ad.intro || ''} onChange={(e) => upd('intro', e.target.value)} style={{ ...inputStyle, resize: 'vertical', marginBottom: '12px' }} placeholder="..." />
+                      <label style={lbl}>Networks (comma-separated chips)</label>
+                      <input type="text" value={(ad.networks || []).join(', ')} onChange={(e) => upd('networks', e.target.value.split(',').map(s => s.trim()).filter(Boolean))} style={inputStyle} placeholder="Google AdSense, Meta Audience Network, ..." />
+                    </>)}
+                  </div>
+
+                  {/* PACKAGES */}
+                  <div style={cardStyle('packages')}>
+                    {secHeader('packages', '💼', `Packages (${packs.length})`)}
+                    {secOn('packages') && (<>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <input type="text" value={ad.packagesHead || ''} onChange={(e) => upd('packagesHead', e.target.value)} style={{ ...inputStyle, maxWidth: '340px', fontWeight: 700 }} placeholder="விளம்பர திட்டங்கள்" />
+                        <button type="button" onClick={addPack} style={{ padding: '8px 14px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>+ Add Package</button>
+                      </div>
+                      {packs.map((p, i) => (
+                        <div key={i} style={{ border: '1px solid #E5E7EB', borderRadius: '8px', padding: '12px', marginBottom: '10px', background: '#FAFAF7' }}>
+                          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                            <input type="text" value={p.name || ''} onChange={(e) => updPack(i, 'name', e.target.value)} style={{ ...inputStyle, fontSize: '13px', flex: 1, minWidth: '140px' }} placeholder="Package name" />
+                            <input type="text" value={p.size || ''} onChange={(e) => updPack(i, 'size', e.target.value)} style={{ ...inputStyle, fontSize: '13px', maxWidth: '130px' }} placeholder="970 × 350" />
+                            <input type="text" value={p.price || ''} onChange={(e) => updPack(i, 'price', e.target.value)} style={{ ...inputStyle, fontSize: '13px', maxWidth: '170px' }} placeholder="ரூ. 5,000 / வாரம்" />
+                            <button type="button" onClick={() => removePack(i)} style={{ padding: '0 12px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Remove</button>
+                          </div>
+                          <input type="text" value={p.desc || ''} onChange={(e) => updPack(i, 'desc', e.target.value)} style={{ ...inputStyle, fontSize: '12px' }} placeholder="Short description" />
+                        </div>
+                      ))}
+                    </>)}
+                  </div>
+
+                  {/* AD BOXES — the "removable based on need" section */}
+                  <div style={cardStyle('adBoxes')}>
+                    {secHeader('adBoxes', '🟥', `Ad Boxes (${boxes.length}) — add / remove based on need`)}
+                    {secOn('adBoxes') && (<>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <input type="text" value={ad.adBoxesHead || ''} onChange={(e) => upd('adBoxesHead', e.target.value)} style={{ ...inputStyle, maxWidth: '340px', fontWeight: 700 }} placeholder="விளம்பர இடங்கள் · Ad Boxes" />
+                        <button type="button" onClick={addBox} style={{ padding: '8px 14px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>+ Add Ad Box</button>
+                      </div>
+                      {boxes.length === 0 && <p style={{ fontSize: '13px', color: '#6B7280', margin: '4px 0 0' }}>No ad boxes. Click "+ Add Ad Box" to create one.</p>}
+                      {boxes.map((b, i) => {
+                        const on = b.enabled !== false;
+                        return (
+                          <div key={i} style={{ border: `1px solid ${on ? '#E5E7EB' : '#FCA5A5'}`, borderRadius: '8px', padding: '12px', marginBottom: '10px', background: on ? '#FAFAF7' : '#FEF2F2', opacity: on ? 1 : 0.75 }}>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                              <input type="text" value={b.label || ''} onChange={(e) => updBox(i, 'label', e.target.value)} style={{ ...inputStyle, fontSize: '13px', flex: 1, minWidth: '160px' }} placeholder="Label (e.g. Rectangle · 300 × 250)" />
+                              <select value={b.size || '300x250'} onChange={(e) => updBox(i, 'size', e.target.value)} style={{ ...inputStyle, fontSize: '13px', maxWidth: '130px', cursor: 'pointer' }}>
+                                <option value="970x350">970 × 350</option>
+                                <option value="970x90">970 × 90</option>
+                                <option value="728x120">728 × 120</option>
+                                <option value="300x600">300 × 600</option>
+                                <option value="300x250">300 × 250</option>
+                                <option value="250x250">250 × 250</option>
+                                <option value="600x150">600 × 150</option>
+                              </select>
+                              <select value={b.network || 'sponsor'} onChange={(e) => updBox(i, 'network', e.target.value)} style={{ ...inputStyle, fontSize: '13px', maxWidth: '120px', cursor: 'pointer' }}>
+                                <option value="sponsor">Sponsor</option>
+                                <option value="google">Google</option>
+                                <option value="meta">Meta</option>
+                              </select>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 700, color: on ? '#059669' : '#EF4444', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={on} onChange={() => updBox(i, 'enabled', !on)} />
+                                {on ? 'SHOWN' : 'HIDDEN'}
+                              </label>
+                              <button type="button" onClick={() => removeBox(i)} style={{ padding: '0 12px', height: '38px', background: '#fff', border: '1px solid #FECACA', color: '#EF4444', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+                            </div>
+                            <div style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '6px' }}>Slot ID: <code>{b.id || '(auto)'}</code> — upload a creative in Ad Manager using this ID.</div>
+                          </div>
+                        );
+                      })}
+                    </>)}
+                  </div>
+
+                  {/* CONTACT CTA */}
+                  <div style={cardStyle('contactCta')}>
+                    {secHeader('contactCta', '📣', 'Contact CTA (bottom banner)')}
+                    {secOn('contactCta') && (<>
+                      <label style={lbl}>Title</label>
+                      <input type="text" value={cta.title || ''} onChange={(e) => updCta('title', e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} placeholder="உங்கள் வணிகம் — ..." />
+                      <label style={lbl}>Subtitle</label>
+                      <input type="text" value={cta.subtitle || ''} onChange={(e) => updCta('subtitle', e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} placeholder="தினசரி 14 லட்சம் வாசகர்கள் ..." />
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1, minWidth: '180px' }}>
+                          <label style={lbl}>Button Text</label>
+                          <input type="text" value={cta.cta || ''} onChange={(e) => updCta('cta', e.target.value)} style={inputStyle} placeholder="விளம்பர திட்டங்கள் →" />
+                        </div>
+                        <div style={{ flex: 1, minWidth: '180px' }}>
+                          <label style={lbl}>Button Link</label>
+                          <input type="text" value={cta.ctaHref || ''} onChange={(e) => updCta('ctaHref', e.target.value)} style={inputStyle} placeholder="mailto:ads@maraimalaimurasu.com" />
+                        </div>
+                      </div>
+                    </>)}
                   </div>
                 </div>
               );
@@ -6219,8 +6550,6 @@ export default function AdminDashboard({ onLogout }) {
                 {(() => {
                   // All known ad slots in the site
                   const SLOTS = [
-                    { id: 'header-left-sq',          size: '250x250', label: 'Header Left Square (was weather)',  page: 'Every page (header)' },
-                    { id: 'header-right-sq',         size: '250x250', label: 'Header Right Square',                page: 'Every page (header)' },
                     { id: 'home-leaderboard-1',      size: '970x350', label: 'Home — Top Stories Billboard (Tall)', page: 'Homepage' },
                     { id: 'home-billboard-samsung',  size: '970x350', label: 'Home — Sponsor Billboard (Tall)',   page: 'Homepage' },
                     { id: 'home-bottom-billboard',   size: '970x350', label: 'Home — Bottom Billboard (after State + National)', page: 'Homepage' },
@@ -6273,6 +6602,12 @@ export default function AdminDashboard({ onLogout }) {
                     { id: 'cooking-sidebar-1',       size: '300x250', label: 'Cooking — Sidebar Rectangle',        page: '/cooking' },
                     { id: 'cooking-sidebar-2',       size: '300x600', label: 'Cooking — Sidebar Half-Page',        page: '/cooking' },
                     { id: 'cooking-meta-ad',         size: '728x120', label: 'Cooking — Meta Audience Strip',      page: '/cooking' },
+                    { id: 'spiritual-inline-1',      size: '970x90',  label: 'Spiritual — Inline Leaderboard',    page: '/spiritual' },
+                    { id: 'spiritual-sidebar-1',     size: '300x600', label: 'Spiritual — Sidebar Half-Page',     page: '/spiritual' },
+                    { id: 'spiritual-sidebar-2',     size: '300x250', label: 'Spiritual — Sidebar Rectangle',     page: '/spiritual' },
+                    { id: 'more-inline-1',           size: '970x90',  label: 'More — Inline Leaderboard',         page: '/more' },
+                    { id: 'more-sidebar-1',          size: '300x600', label: 'More — Sidebar Half-Page',          page: '/more' },
+                    { id: 'more-sidebar-2',          size: '300x250', label: 'More — Sidebar Rectangle',          page: '/more' },
                     { id: 'category-mid-ad',         size: '970x250', label: 'Category — Mid Billboard',           page: '/category' },
                     { id: 'contact-leader-1',        size: '970x90',  label: 'Contact — Top Leaderboard',          page: '/contact' },
                     { id: 'contact-rail-1',          size: '300x250', label: 'Contact — Sidebar Rectangle',        page: '/contact' }
@@ -6313,6 +6648,7 @@ export default function AdminDashboard({ onLogout }) {
                     <div style={{ display: 'grid', gap: '12px' }}>
                       {SLOTS.map(slot => {
                         const config = houseAds[slot.id] || {};
+                        const hidden = config.hidden === true;
                         const hasImage = !!config.image;
                         const hasVideo = !!config.video;
                         const hasContent = hasImage || hasVideo;
@@ -6321,7 +6657,7 @@ export default function AdminDashboard({ onLogout }) {
                                    : 'cover';
                         const bg = config.bg || '#000000';
                         return (
-                          <div key={slot.id} style={{ padding: '14px', background: hasContent ? '#F0FDF4' : '#F9FAFB', borderRadius: '8px', border: `1px solid ${hasContent ? '#86EFAC' : '#E5E7EB'}` }}>
+                          <div key={slot.id} style={{ padding: '14px', background: hidden ? '#FEF2F2' : (hasContent ? '#F0FDF4' : '#F9FAFB'), borderRadius: '8px', border: `1px solid ${hidden ? '#FCA5A5' : (hasContent ? '#86EFAC' : '#E5E7EB')}`, opacity: hidden ? 0.7 : 1 }}>
                             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
                               {/* Preview — shows image or video icon */}
                               <div style={{
@@ -6355,6 +6691,12 @@ export default function AdminDashboard({ onLogout }) {
                                   <span style={{ fontSize: '11px', color: '#6B7280' }}>{slot.page}</span>
                                   {hasImage && <span style={{ fontSize: '10px', padding: '2px 6px', background: '#059669', color: '#fff', borderRadius: '3px', fontWeight: '700' }}>✓ IMAGE</span>}
                                   {hasVideo && <span style={{ fontSize: '10px', padding: '2px 6px', background: '#7C3AED', color: '#fff', borderRadius: '3px', fontWeight: '700' }}>▶ VIDEO</span>}
+                                  {hidden && <span style={{ fontSize: '10px', padding: '2px 6px', background: '#EF4444', color: '#fff', borderRadius: '3px', fontWeight: '700' }}>🚫 HIDDEN</span>}
+                                  {/* Show / Hide this ad box on the live site — removable "based on need" */}
+                                  <label style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 700, color: hidden ? '#EF4444' : '#059669', cursor: 'pointer', whiteSpace: 'nowrap' }} title="Uncheck to remove this ad box from the live page. Check again to bring it back.">
+                                    <input type="checkbox" checked={!hidden} onChange={(e) => updateSlot(slot.id, 'hidden', !e.target.checked)} />
+                                    {hidden ? 'Hidden on site' : 'Shown on site'}
+                                  </label>
                                 </div>
 
                                 {/* Row 1 — 🖼 IMAGE URL (paste Google Drive / Imgur etc) */}

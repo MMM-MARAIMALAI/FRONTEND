@@ -296,6 +296,8 @@ export default function HomePage() {
     section4Title: 'மற்றவை',
     section4Cat: 'அழகுகுறிப்பு'
   });
+  // Per-section visibility (admin → Home Editor → Section Visibility)
+  const [homeSections, setHomeSections] = useState({});
 
   useEffect(() => {
     // 1. Load site settings + listen for changes from admin
@@ -331,6 +333,7 @@ export default function HomePage() {
           if (parsed.twoColRight) setTwoColRight(parsed.twoColRight);
           if (parsed.sportsCol) setSportsColData(parsed.sportsCol);
           if (parsed.lifestyleCol) setLifestyleColData(parsed.lifestyleCol);
+          if (parsed.sections) setHomeSections(parsed.sections);
         } catch (e) {
           console.error('Failed to parse customHomeContent', e);
         }
@@ -435,10 +438,13 @@ export default function HomePage() {
     setPdfModal(null);
   };
 
+  // Section visibility helper — admin can show/hide each Home section
+  const isOn = (k) => homeSections[k] !== false;
+
   return (
     <>
       {/* Weekly Edition PDF banner — only shown if admin uploaded a PDF */}
-      {editionPdf.key && (
+      {isOn('weeklyEdition') && editionPdf.key && (
         <section style={{ padding: '16px 0', background: 'linear-gradient(135deg, #1A1614 0%, #2a2421 100%)', borderBottom: '3px solid var(--accent)' }}>
           <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', color: '#F2ECE0' }}>
@@ -464,6 +470,7 @@ export default function HomePage() {
         </section>
       )}
 
+      {isOn('hero') && (
       <section data-screen-label="01 Hero">
         <div className="container">
           <div className="hero-grid">
@@ -482,7 +489,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
+      {isOn('topStories') && (
       <section className="section" data-screen-label="02 Top Stories">
         <div className="container">
           <div className="section-head">
@@ -495,7 +504,9 @@ export default function HomePage() {
           <AdSlot network="google" size="970x350" slotId="home-leaderboard-1" note="Google Ad Manager · Tall Billboard" style={{marginTop: 32, maxWidth: '100%'}} />
         </div>
       </section>
+      )}
 
+      {isOn('electionBanner') && (
       <ElectionBanner
         title={electionBanner.title || siteSettings.heroTitle}
         leftNum={electionBanner.leftNum}
@@ -503,7 +514,9 @@ export default function HomePage() {
         rightNum={electionBanner.rightNum}
         rightLabel={electionBanner.rightLabel}
       />
+      )}
 
+      {isOn('electionCoverage') && (
       <section className="section" data-screen-label="03 Election Coverage">
         <div className="container">
           <div className="section-head">
@@ -516,20 +529,9 @@ export default function HomePage() {
           <InFeedAd network="meta" slotId="home-infeed-meta" />
         </div>
       </section>
+      )}
 
-      <section className="section" data-screen-label="04 Cinema & Lifestyle">
-        <div className="container">
-          <div className="section-head">
-            <h2>{siteSettings.section2Title}</h2>
-            <a className="more" href="/category">மேலும் →</a>
-          </div>
-          <div className="card-grid">
-            {customCinema.map((s, i) => <Card key={i} data={s} withVideo={i < 2} />)}
-          </div>
-          <AdSlot network="sponsor" size="970x350" slotId="home-billboard-samsung" note="Sponsor · Tall Billboard" style={{marginTop: 32, maxWidth: '100%'}} />
-        </div>
-      </section>
-
+      {isOn('stateNational') && (
       <section className="section" data-screen-label="05 Tamil Nadu & National">
         <div className="container">
           <div className="two-col">
@@ -566,18 +568,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <section className="section" data-screen-label="06 Sports & Lifestyle">
-        <div className="container">
-          <div className="two-col">
-            <ColBlock data={{ ...sportsColData, head: siteSettings.section3Title || sportsColData.head }} />
-            <ColBlock data={{ ...lifestyleColData, head: siteSettings.section4Title || lifestyleColData.head }} />
-          </div>
-
-          {/* Bottom billboard — tall ad box matching the home page's other billboards */}
-          <AdSlot network="sponsor" size="970x350" slotId="home-bottom-billboard" note="Sponsor · Tall Billboard" style={{ marginTop: 36, maxWidth: '100%' }} />
-        </div>
-      </section>
+      )}
 
       {/* Inline PDF viewer modal for the weekly edition */}
       <PdfViewer pdf={pdfModal} onClose={closePdfModal} />

@@ -46,6 +46,10 @@ export default function ContactPage() {
       { num: '24x7', label: 'செய்தி டெஸ்க்' },
       { num: '4 HR', label: 'சராசரியான பதிலளிப்பு' }
     ],
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      hero: true, contactInfo: true, contactForm: true, quickLinks: true
+    },
     officeAddress: 'எண். 112, எல்.ஐ.ஜி., என்.எச்.-1, டாக்டர் அம்பேத்கர் தெரு, மறைமலை நகர், செங்கல்பட்டு - 603209.',
     phoneLandline: '+91 94441 12294,',
     phoneWhatsapp: '+91 94441 12294',
@@ -57,6 +61,9 @@ export default function ContactPage() {
     techPhone: '+91 94441 12294',
     techDesc: 'App, ePaper, Subscription'
   });
+
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
 
   // ─── Contact form state + submit ─────────────────────────────────────
   const [form, setForm] = useState({
@@ -137,6 +144,7 @@ export default function ContactPage() {
   return (
     <div className="contact-page">
       {/* 1. Dark Hero Section */}
+      {isOn('hero') && (
       <section style={{ background: 'linear-gradient(135deg, #111 0%, #1A1614 100%)', color: '#fff', padding: '60px 0 40px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 0, right: 0, width: '50%', height: '100%', background: 'radial-gradient(circle at top right, rgba(200, 16, 46, 0.25), transparent 60%)' }}></div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -177,8 +185,10 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* 2. Contact Info Grid */}
+      {isOn('contactInfo') && (
       <section className="section" style={{ background: '#fff' }}>
         <div className="container">
           
@@ -231,8 +241,10 @@ export default function ContactPage() {
 
         </div>
       </section>
+      )}
 
       {/* 3. Form Section */}
+      {isOn('contactForm') && (
       <section className="section" id="form" style={{ background: '#f9f9f9', paddingTop: '48px', paddingBottom: '64px' }}>
         <div className="container">
           
@@ -352,6 +364,7 @@ export default function ContactPage() {
             <div>
               
               {/* Quick Links */}
+              {isOn('quickLinks') && (
               <div style={{ background: '#fff', border: '1px solid var(--rule)', marginBottom: '32px' }}>
                 <div style={{ background: '#111', color: '#fff', padding: '12px 16px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em' }}>
                   விரைவு தொடர்புகள்
@@ -405,6 +418,7 @@ export default function ContactPage() {
 
                 </div>
               </div>
+              )}
 
               {/* Sidebar Ad */}
               <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
@@ -415,6 +429,7 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+      )}
 
     </div>
   );

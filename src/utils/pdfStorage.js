@@ -62,6 +62,22 @@ export async function savePdfBlob(file) {
   }
 }
 
+// Convert a pasted PDF link into an iframe-embeddable URL.
+//   • Google Drive share/view links  →  https://drive.google.com/file/d/ID/preview
+//     (works when the file is shared "Anyone with the link can view")
+//   • Any other http(s) URL (direct .pdf, Dropbox raw, etc.) passes through.
+// Admins can paste a normal Drive "share" link and it will embed correctly.
+export function toEmbeddablePdfUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  const u = url.trim();
+  if (!u) return u;
+  let m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]{10,})/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  m = u.match(/drive\.google\.com\/(?:open|uc)\?(?:[^&]*&)*id=([a-zA-Z0-9_-]{10,})/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  return u;
+}
+
 // Convert any pdf value (URL, data:base64, or idb:key) to a usable URL
 // Returns a Promise<string> with a URL ready to open in a new tab
 export async function resolvePdfUrl(pdfValue) {

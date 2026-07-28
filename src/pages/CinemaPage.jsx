@@ -13,6 +13,14 @@ export default function CinemaPage() {
       { num: '248', label: 'செய்திகள் / விமர்சனங்கள்' },
       { num: '14', label: 'வீடியோ அப்டேட்ஸ்' }
     ],
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      featured: true, midAd: true, newsGrid: true, reviews: true, popular: true,
+      inlineAd1: true, samsungBanner: true, videoNews: true, boxOffice: true,
+      inlineAd2: true, photoGallery: true, bottomCta: true,
+      sidebarTrending: true, sidebarAd: true, sidebarOtt: true, sidebarExtraAds: true,
+      sidebarVideoAd: true, sidebarBoxOfficeAd: true, sidebarPhotoAd: true
+    },
     featured: {
       cat: 'POLITICS',
       img: '',
@@ -141,6 +149,8 @@ export default function CinemaPage() {
     return () => window.removeEventListener('storage', onChange);
   }, []);
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
   const featured = pc.featured || {};
   const stats = pc.stats || [];
   const trending = pc.trending || [];
@@ -191,6 +201,7 @@ export default function CinemaPage() {
         {/* MAIN COLUMN */}
         <div className="cat-main">
           {/* FEATURED (with POLITICS pill on image) */}
+          {isOn('featured') && (
           <a href={resolveLink(featured)} className="cat-featured" style={{ background: '#1A1614', color: '#F2ECE0', borderColor: '#1A1614' }}>
             <div className="cat-featured-img" style={{ background: featured.img ? `url(${featured.img}) center/cover no-repeat` : stripe, position: 'relative', minHeight: '320px' }}>
               {!featured.img && <span className="cat-img-label" style={{ color: 'var(--ink-3)' }}>{featured.placeholder || 'CINEMA'}</span>}
@@ -206,13 +217,18 @@ export default function CinemaPage() {
               <div className="cat-card-meta" style={{ color: '#8a8478' }}>{featured.meta}</div>
             </div>
           </a>
+          )}
 
           {/* MID AD — Per-slot upload (uses cinema-mid-ad from Ad Manager) */}
+          {isOn('midAd') && (
           <div style={{ margin: '24px 0' }}>
             <AdSlot network="google" size="970x90" slotId="cinema-mid-ad" note={pc.midAdSub} style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* NEWS GRID (4 cards) */}
+          {isOn('newsGrid') && (
+          <>
           <div className="cat-section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--accent)', paddingBottom: '8px', marginBottom: '18px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.newsHead}</h2>
             <a href="#" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{pc.newsMore}</a>
@@ -231,8 +247,12 @@ export default function CinemaPage() {
               </a>
             ))}
           </div>
+          </>
+          )}
 
           {/* REVIEWS (3 cards) */}
+          {isOn('reviews') && (
+          <>
           <div className="cat-section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--accent)', paddingBottom: '8px', marginBottom: '18px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.reviewsHead}</h2>
             <a href="#" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{pc.reviewsMore}</a>
@@ -253,8 +273,12 @@ export default function CinemaPage() {
               </a>
             ))}
           </div>
+          </>
+          )}
 
           {/* POPULAR — 6 circular avatars with role labels + 2-line descriptions */}
+          {isOn('popular') && (
+          <>
           <div className="cat-section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--accent)', paddingBottom: '8px', marginBottom: '22px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.popularHead}</h2>
             <a href="#" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{pc.popularMore}</a>
@@ -296,14 +320,18 @@ export default function CinemaPage() {
               </a>
             ))}
           </div>
+          </>
+          )}
 
           {/* INLINE AD between Popular and Samsung */}
+          {isOn('inlineAd1') && (
           <div style={{ margin: '0 0 32px 0' }}>
             <AdSlot network="google" size="970x90" slotId="cinema-inline-1" note="Google AdSense · In-feed" style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* SAMSUNG BANNER */}
-          {samsung.enabled && (
+          {isOn('samsungBanner') && samsung.enabled && (
             <a href={samsung.ctaHref || '#'} style={{ display: 'block', textDecoration: 'none', color: 'inherit', borderRadius: '10px', overflow: 'hidden', marginBottom: '36px', background: 'linear-gradient(135deg, #1428A0 0%, #001E5F 100%)' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr', gap: '0', alignItems: 'center', padding: '24px 28px', color: '#fff' }}>
                 <div>
@@ -326,6 +354,8 @@ export default function CinemaPage() {
           )}
 
           {/* VIDEO NEWS */}
+          {isOn('videoNews') && (
+          <>
           <div className="cat-section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--accent)', paddingBottom: '8px', marginBottom: '18px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.videoHead}</h2>
             <a href="#" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{pc.videoMore}</a>
@@ -359,8 +389,12 @@ export default function CinemaPage() {
               );
             })}
           </div>
+          </>
+          )}
 
           {/* BOX OFFICE LEADERBOARD */}
+          {isOn('boxOffice') && (
+          <>
           <div className="cat-section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--accent)', paddingBottom: '8px', marginBottom: '18px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.boxOfficeHead}</h2>
             <a href="#" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{pc.boxOfficeMore}</a>
@@ -377,13 +411,19 @@ export default function CinemaPage() {
               </div>
             ))}
           </div>
+          </>
+          )}
 
           {/* INLINE AD between Box Office and Photo Gallery */}
+          {isOn('inlineAd2') && (
           <div style={{ margin: '0 0 32px 0' }}>
             <AdSlot network="meta" size="970x90" slotId="cinema-inline-2" note="Meta Audience Network · In-feed" style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* PHOTO GALLERY (2x2 grid) */}
+          {isOn('photoGallery') && (
+          <>
           <div className="cat-section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '2px solid var(--accent)', paddingBottom: '8px', marginBottom: '18px' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.photoHead}</h2>
             <a href="#" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{pc.photoMore}</a>
@@ -400,9 +440,11 @@ export default function CinemaPage() {
               </div>
             ))}
           </div>
+          </>
+          )}
 
           {/* BOTTOM CTA */}
-          {cta && cta.title && (
+          {isOn('bottomCta') && cta && cta.title && (
             <div style={{ background: '#1A1614', color: '#F2ECE0', borderRadius: '10px', padding: '24px 28px', marginTop: '24px' }}>
               <div style={{ display: 'inline-block', background: 'var(--accent)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '4px 12px', letterSpacing: '0.14em', marginBottom: '12px' }}>{cta.sponsored}</div>
               <h3 style={{ margin: '0 0 8px 0', fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 800 }}>{cta.title}</h3>
@@ -415,7 +457,7 @@ export default function CinemaPage() {
         {/* SIDEBAR */}
         <aside className="cat-sidebar">
           {/* TRENDING */}
-          {trending.length > 0 && (
+          {isOn('sidebarTrending') && trending.length > 0 && (
             <div className="cat-rail-block">
               <div className="cat-rail-head">{pc.trendingHead}</div>
               <ol className="cat-trending">
@@ -433,10 +475,12 @@ export default function CinemaPage() {
           )}
 
           {/* SIDEBAR AD 300x600 (per-slot from Ad Manager) */}
+          {isOn('sidebarAd') && (
           <AdSlot network="google" size="300x600" slotId="cinema-sidebar" note={pc.sidebarAdSub} />
+          )}
 
           {/* OTT RELEASES */}
-          {ottItems.length > 0 && (
+          {isOn('sidebarOtt') && ottItems.length > 0 && (
             <div className="cat-rail-block">
               <div className="cat-rail-head">{pc.ottHead}</div>
               <ul style={{ listStyle: 'none', margin: 0, padding: '8px 18px 14px' }}>
@@ -453,26 +497,42 @@ export default function CinemaPage() {
           )}
 
           {/* EXTRA SIDEBAR ADS — fill empty space below OTT */}
+          {isOn('sidebarExtraAds') && (
+          <>
           <AdSlot network="google" size="300x250" slotId="cinema-sidebar-2" note="Google AdSense · Rectangle" />
           <AdSlot network="meta" size="300x600" slotId="cinema-sidebar-3" note="Meta Audience Network · Half Page" />
+          </>
+          )}
 
           {/* NEW SIDEBAR AD — next to வீடியோ செய்திகள் (Video News) */}
+          {isOn('sidebarVideoAd') && (
+          <>
           <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginTop: '20px', marginBottom: '8px' }}>
             ஆதரவாளர் விளம்பரம் · வீடியோ
           </div>
           <AdSlot network="sponsor" size="300x600" slotId="cinema-sidebar-4" note="Half Page · 300 × 600 (next to Video News)" style={{ maxWidth: '100%' }} />
+          </>
+          )}
 
           {/* NEW SIDEBAR AD — next to பாக்ஸ் ஆபிஸ் (Box Office) */}
+          {isOn('sidebarBoxOfficeAd') && (
+          <>
           <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginTop: '20px', marginBottom: '8px' }}>
             ஆதரவாளர் விளம்பரம் · பாக்ஸ் ஆபிஸ்
           </div>
           <AdSlot network="sponsor" size="300x250" slotId="cinema-sidebar-5" note="Rectangle · 300 × 250 (next to Box Office)" style={{ maxWidth: '100%' }} />
+          </>
+          )}
 
           {/* NEW SIDEBAR AD — next to புகைப்பட தொகுப்பு (Photo Gallery) */}
+          {isOn('sidebarPhotoAd') && (
+          <>
           <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginTop: '20px', marginBottom: '8px' }}>
             ஆதரவாளர் விளம்பரம் · புகைப்படம்
           </div>
           <AdSlot network="sponsor" size="300x600" slotId="cinema-sidebar-6" note="Half Page · 300 × 600 (next to Photo Gallery)" style={{ maxWidth: '100%' }} />
+          </>
+          )}
         </aside>
       </div>
 

@@ -16,6 +16,12 @@ export default function SpiritualPage() {
     subtitle: 'கோயில் செய்திகள், திருவிழாக்கள், பூஜை விதிகள், வாஸ்து மற்றும் ஜோதிடம் — ஆன்மீக வாழ்வின் முழுமையான தொகுப்பு.',
     breadcrumb: { home: 'முகப்பு', current: 'ஆன்மீகம்' },
 
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      featured: true, categories: true, panchangam: true, midAd: true,
+      articles: true, bottomCta: true, sidebar: true, sidebarAd: true
+    },
+
     // Hero / featured spiritual article
     featured: {
       kicker: 'சிறப்பு கட்டுரை',
@@ -112,6 +118,8 @@ export default function SpiritualPage() {
     return () => window.removeEventListener('storage', onChange);
   }, []);
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
   const featured = pc.featured || {};
   const categories = pc.categories || [];
   const panchangam = pc.panchangam || {};
@@ -145,7 +153,7 @@ export default function SpiritualPage() {
           {/* LEFT: featured + categories + articles */}
           <div>
             {/* Featured spiritual article */}
-            {featured.title && (
+            {isOn('featured') && featured.title && (
               <a href={resolveLink(featured)} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 0, textDecoration: 'none', color: 'inherit', background: '#fff', border: '1px solid #F0E6D2', borderRadius: '12px', overflow: 'hidden', marginBottom: '28px', boxShadow: '0 2px 8px rgba(120,80,30,0.05)' }}>
                 <div style={{ minHeight: '320px', background: featured.img ? `url(${featured.img}) center/cover no-repeat` : stripe, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--ink-3)', position: 'relative' }}>
                   {!featured.img && <span>{featured.placeholder}</span>}
@@ -162,7 +170,7 @@ export default function SpiritualPage() {
             )}
 
             {/* Category tiles */}
-            {categories.length > 0 && (
+            {isOn('categories') && categories.length > 0 && (
               <section style={{ marginBottom: '32px' }}>
                 <h2 style={{ margin: '0 0 16px 0', fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)', borderBottom: '2px solid #9D174D', paddingBottom: '8px' }}>{pc.categoriesHead}</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
@@ -180,6 +188,7 @@ export default function SpiritualPage() {
             )}
 
             {/* Mini panchangam */}
+            {isOn('panchangam') && (
             <section style={{ marginBottom: '32px', background: '#FFF8EA', border: '1px solid #F0E6D2', borderRadius: '12px', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                 <h3 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '18px', color: '#9D174D' }}>✱ {pc.panchangamHead}</h3>
@@ -194,14 +203,17 @@ export default function SpiritualPage() {
                 <div><div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>தேதி</div><div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink-2)' }}>{panchangam.date}</div></div>
               </div>
             </section>
+            )}
 
             {/* Mid ad */}
+            {isOn('midAd') && (
             <div style={{ margin: '20px 0 28px' }}>
               <AdSlot network="sponsor" size="970x90" slotId="spiritual-inline-1" note="In-feed banner · 970 × 90" style={{ maxWidth: '100%' }} />
             </div>
+            )}
 
             {/* Article list */}
-            {articles.length > 0 && (
+            {isOn('articles') && articles.length > 0 && (
               <section>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '16px', borderBottom: '2px solid #9D174D', paddingBottom: '8px' }}>
                   <h2 style={{ margin: 0, fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '22px', color: 'var(--ink)' }}>{pc.articlesHead}</h2>
@@ -225,7 +237,7 @@ export default function SpiritualPage() {
             )}
 
             {/* Bottom CTA */}
-            {cta && cta.title && (
+            {isOn('bottomCta') && cta && cta.title && (
               <section style={{ marginTop: '40px', background: 'linear-gradient(135deg, #9D174D 0%, #BE123C 100%)', color: '#fff', borderRadius: '12px', padding: '28px 32px' }}>
                 <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', padding: '4px 12px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', marginBottom: '14px', borderRadius: '4px' }}>{cta.sponsored}</div>
                 <h3 style={{ margin: '0 0 8px 0', fontFamily: 'var(--serif)', fontSize: '22px', fontWeight: 800, lineHeight: 1.3 }}>{cta.title}</h3>
@@ -238,7 +250,7 @@ export default function SpiritualPage() {
           {/* RIGHT: sidebar */}
           <aside>
             {/* Featured sidebar links */}
-            {sidebarItems.length > 0 && (
+            {isOn('sidebar') && sidebarItems.length > 0 && (
               <div style={{ background: '#fff', border: '1px solid #F0E6D2', borderRadius: '10px', marginBottom: '20px' }}>
                 <div style={{ padding: '14px 18px', borderBottom: '2px solid #9D174D' }}>
                   <h3 style={{ margin: 0, fontFamily: 'var(--serif)', fontSize: '16px', fontWeight: 800, color: 'var(--ink)' }}>{pc.sidebarHead}</h3>
@@ -257,12 +269,16 @@ export default function SpiritualPage() {
             )}
 
             {/* Sidebar ad */}
+            {isOn('sidebarAd') && (
+            <>
             <div style={{ marginBottom: '20px' }}>
               <AdSlot network="google" size="300x600" slotId="spiritual-sidebar-1" note="Google Ad Manager · Half Page" style={{ maxWidth: '100%' }} />
             </div>
             <div>
               <AdSlot network="sponsor" size="300x250" slotId="spiritual-sidebar-2" note="MPU · 300 × 250" style={{ maxWidth: '100%' }} />
             </div>
+            </>
+            )}
           </aside>
         </div>
       </div>

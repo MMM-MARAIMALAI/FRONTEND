@@ -129,6 +129,12 @@ export function AdSlot({ network = "google", size = "728x90", slotId = "", note 
   let displaySlotId = slotId;
 
   if (settings) {
+    // Global per-slot HIDE — Admin → Ad Manager can hide ANY ad box on ANY
+    // page "based on need". A hidden slot renders nothing at all (the ad box
+    // is removed from the page). Show it again by un-hiding it in Ad Manager.
+    if (slotId && settings.houseAds && settings.houseAds[slotId] && settings.houseAds[slotId].hidden) {
+      return null;
+    }
     // Priority 1: Per-slot override — each ad slot can have its own image OR
     // video uploaded via Admin → Ad Manager → Per-slot ads list. This takes
     // precedence over the legacy single houseImageUrl override.

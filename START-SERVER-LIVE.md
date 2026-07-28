@@ -78,7 +78,7 @@ Test it: open `https://maraimalai-murasu.vercel.app/api/ads/health` — you shou
 Edit `E:\maraimalai-murasu web\MMM front end\.env.production`:
 
 ```
-VITE_ADS_API=https://maraimalai-murasu.vercel.app
+VITE_ADS_API=https://frontend-delta-five-93.vercel.app
 VITE_ADS_API_TOKEN=maraimalai-murasu-2026
 ```
 

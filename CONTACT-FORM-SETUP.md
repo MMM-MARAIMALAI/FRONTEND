@@ -125,7 +125,7 @@ If 200/month is too tight, EmailJS Personal plan is $9/month for 1,000 emails. F
 ## 🔒 Security
 
 - **The Public Key is safe to expose** — it's designed to be in client-side code. EmailJS validates the origin domain in their dashboard (Settings → Account → Security) to prevent abuse from other websites.
-- To lock down which domains can use your Service ID, go to **EmailJS Dashboard → Account → Security → Add allowed origins** → add `https://marai-malai-murasu.vercel.app` and `https://maraimalaimurasu.com`.
+- To lock down which domains can use your Service ID, go to **EmailJS Dashboard → Account → Security → Add allowed origins** → add `https://frontend-delta-five-93.vercel.app` and `https://maraimalaimurasu.com`.
 - The form has basic rate limiting via EmailJS (max 200/month free). For higher volume + abuse protection, add hCaptcha to the form's onSubmit.
 
 ## 🚀 Push to deploy
@@ -138,7 +138,7 @@ git push
 ```
 
 After Vercel rebuilds (~1 min):
-- Open `https://marai-malai-murasu.vercel.app/contact`
+- Open `https://frontend-delta-five-93.vercel.app/contact`
 - Fill the form
 - Click "செய்தியை அனுப்பு"
 - Email arrives in the inbox configured in your EmailJS template ✅

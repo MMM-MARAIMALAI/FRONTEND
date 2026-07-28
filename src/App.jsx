@@ -15,6 +15,7 @@ import CookingPage from './pages/CookingPage.jsx';
 import LawPage from './pages/LawPage.jsx';
 import EPaperPage from './pages/EPaperPage.jsx';
 import SubscriptionPage from './pages/SubscriptionPage.jsx';
+import AdvertisePage from './pages/AdvertisePage.jsx';
 import { CustomBannerStrip } from './components/CustomBanners.jsx';
 import AdminApp from './admin/AdminApp.jsx';
 import { runHomeContentMigration } from './utils/contentMigration.js';
@@ -99,6 +100,7 @@ export default function App() {
     if (currentPath === '/sports') return 'sports';
     if (currentPath === '/law' || currentPath === '/category' || currentPath === '/article') return 'law';
     if (currentPath === '/beauty' || currentPath === '/cooking' || currentPath === '/more') return 'more';
+    if (currentPath === '/advertise') return 'advertise';
     return '';
   };
 
@@ -145,6 +147,7 @@ export default function App() {
              currentPath === '/law' ? <LawPage /> :
              currentPath === '/epaper' ? <EPaperPage /> :
              currentPath === '/subscription' ? <SubscriptionPage /> :
+             currentPath === '/advertise' ? <AdvertisePage /> :
              currentPath === '/article' ? <ArticlePage /> :
              currentPath === '/category' ? <CategoryPage title="சட்டம் முரசு" /> :
              currentPath === '/headlines' ? <HeadlinesPage /> :

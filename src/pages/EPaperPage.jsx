@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PdfViewer from '../components/PdfViewer.jsx';
-import { resolvePdfUrl } from '../utils/pdfStorage.js';
+import { resolvePdfUrl, toEmbeddablePdfUrl } from '../utils/pdfStorage.js';
 
 /*
   ePaper page (செய்தித்தாள்கள்) — grid of weekly newspaper PDFs.
@@ -50,6 +50,13 @@ export default function EPaperPage() {
   const [pdfModal, setPdfModal] = useState(null);
 
   const openPaper = async (p) => {
+    // Priority 1: a pasted Google Drive / direct PDF link (opens instantly)
+    const rawUrl = (p.pdfUrl && String(p.pdfUrl).trim()) || '';
+    if (rawUrl) {
+      setPdfModal({ src: toEmbeddablePdfUrl(rawUrl), title: p.title, downloadName: `${p.title}.pdf` });
+      return;
+    }
+    // Priority 2: an uploaded PDF file (Blob / IndexedDB)
     if (!p.pdfKey || !String(p.pdfKey).trim()) {
       alert(`"${p.title}" — PDF இன்னும் பதிவேற்றப்படவில்லை. நிர்வாகி (Admin) விரைவில் சேர்ப்பார்.`);
       return;
@@ -110,7 +117,7 @@ export default function EPaperPage() {
               <button
                 type="button"
                 onClick={() => openPaper(p)}
-                style={{ border: 0, padding: 0, background: 'transparent', cursor: p.pdfKey ? 'pointer' : 'default', display: 'block' }}
+                style={{ border: 0, padding: 0, background: 'transparent', cursor: (p.pdfKey || (p.pdfUrl && String(p.pdfUrl).trim())) ? 'pointer' : 'default', display: 'block' }}
               >
                 <div style={{ width: '100%', aspectRatio: '3/4', background: p.thumb ? `url(${p.thumb}) center/cover no-repeat` : '#FAFAF7', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', borderBottom: '1px solid #E5E7EB' }}>
                   {!p.thumb && (
@@ -119,7 +126,7 @@ export default function EPaperPage() {
                       <div>NEWSPAPER<br/>COVER</div>
                     </div>
                   )}
-                  {p.pdfKey && (
+                  {(p.pdfKey || (p.pdfUrl && String(p.pdfUrl).trim())) && (
                     <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#059669', color: '#fff', padding: '3px 9px', borderRadius: '3px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em' }}>PDF</div>
                   )}
                 </div>

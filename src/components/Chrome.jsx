@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import logoSrc from '../assets/logo.png';
-import { AdSlot } from './Ads.jsx';
 import { useLanguage, useT } from '../utils/i18n.js';
 
 // ---------- Live timestamp ----------
@@ -130,10 +129,7 @@ export function Masthead() {
   return (
     <div className="masthead">
       <div className="masthead-inner">
-        {/* LEFT — mirrors the right-side ad. Was the Chennai weather widget. */}
-        <div className="edition-meta masthead-ad-left" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px' }}>
-          <AdSlot network="google" size="250x250" slotId="header-left-sq" note="Google AdSense · Square" style={{ width: '190px' }} />
-        </div>
+        {/* Header side ad boxes removed — logo now centered on its own. */}
         <div className="brand">
           <div className="ornament">
             <span className="line"></span>
@@ -144,10 +140,6 @@ export function Masthead() {
             <img src={logoSrc} alt="மறைமலை முரசு" style={{ maxWidth: "680px", width: "100%", height: "auto", display: "block", margin: "0 auto" }} />
           </a>
 
-        </div>
-        {/* RIGHT — unchanged 250x250 ad slot */}
-        <div className="edition-meta" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '16px' }}>
-          <AdSlot network="google" size="250x250" slotId="header-right-sq" note="Google AdSense · Square" style={{ width: '190px' }} />
         </div>
       </div>
     </div>
@@ -167,6 +159,7 @@ const NAV_SLUG_TO_KEY = {
   beauty: 'navBeauty',
   cooking: 'navCooking',
   contact: 'navContact',
+  advertise: 'navAdvertise',
 };
 
 export function PrimaryNav({ active = "headlines", onSearch }) {
@@ -229,6 +222,10 @@ export function PrimaryNav({ active = "headlines", onSearch }) {
         }
         rootItems.push(item);
       });
+
+      // Fixed "விளம்பரம்" (Advertise) item — always shown, independent of
+      // the editable category list. Points to the dedicated /advertise page.
+      rootItems.push({ id: 'advertise', label: 'விளம்பரம்', href: '/advertise' });
 
       setNavItems(rootItems);
     };
@@ -380,9 +377,8 @@ export function SubNav({ currentPath }) {
         const parentCat = cats.find(c => c.id === activeParentId);
         const children = cats.filter(c => String(c.parentId) === String(activeParentId));
         if (children.length > 0) {
-          // Prepend the parent itself as the first tab ("All")
+          // Show only the child sub-categories (no "அனைத்தும் / All" overview tab)
           setItems([
-            { name: 'அனைத்தும்', slug: parentCat.slug, isOverview: true },
             ...children.map(c => ({ name: c.name, slug: c.slug })),
           ]);
           setParentLabel(parentCat.name);
@@ -637,21 +633,18 @@ export function Footer() {
             ? "Tamil Nadu's leading Tamil weekly. Trusted news, in-depth analysis, the voice of the people."
             : 'தமிழ்நாட்டின் முன்னணி தமிழ் வார இதழ். நம்பகமான செய்திகள், ஆழமான பகுப்பாய்வு, மக்களின் குரல்.'}</p>
           <div className="social">
-            <a href="#" title="Facebook">f</a>
-            <a href="#" title="Twitter">𝕏</a>
-            <a href="#" title="YouTube">▶</a>
-            <a href="#" title="Instagram">◉</a>
-            <a href="#" title="WhatsApp">w</a>
+            <a href="https://www.facebook.com/maraimalaimurasu" title="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/maraimalaimurasu/" title="Instagram" target="_blank" rel="noopener noreferrer">◉</a>
+            <a href="https://www.youtube.com/@maraimalaimurasu-mmm" title="YouTube" target="_blank" rel="noopener noreferrer">▶</a>
           </div>
         </div>
         <div>
           <h4>{lang === 'en' ? 'News' : 'செய்திகள்'}</h4>
           <ul>
-            <li><a href="#">{lang === 'en' ? 'Tamil Nadu' : 'தமிழகம்'}</a></li>
-            <li><a href="#">{lang === 'en' ? 'National' : 'தேசியம்'}</a></li>
-            <li><a href="#">{lang === 'en' ? 'World' : 'உலகம்'}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Politics' : 'அரசியல்'}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Business' : 'வணிகம்'}</a></li>
+            <li><a href="/headlines">{lang === 'en' ? 'Tamil Nadu' : 'தமிழகம்'}</a></li>
+            <li><a href="/headlines">{lang === 'en' ? 'National' : 'தேசியம்'}</a></li>
+            <li><a href="/headlines">{lang === 'en' ? 'World' : 'உலகம்'}</a></li>
+            <li><a href="/headlines">{lang === 'en' ? 'Politics' : 'அரசியல்'}</a></li>
           </ul>
         </div>
         <div>
@@ -659,30 +652,15 @@ export function Footer() {
           <ul>
             <li><a href="/cinema">{t('navCinema')}</a></li>
             <li><a href="/sports">{t('navSports')}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Lifestyle' : 'வாழ்வியல்'}</a></li>
             <li><a href="/cooking">{t('navCooking')}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Education' : 'கல்வி'}</a></li>
           </ul>
         </div>
         <div>
           <h4>{lang === 'en' ? 'Company' : 'நிறுவனம்'}</h4>
           <ul>
-            <li><a href="#">{t('footerAboutUs')}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Editorial Board' : 'ஆசிரியர் குழு'}</a></li>
-            <li><a href="#">{t('footerAds')}</a></li>
+            <li><a href="/advertise">{t('footerAds')}</a></li>
             <li><a href="/contact">{t('navContact')}</a></li>
-            <li><a href="#">{t('footerCareers')}</a></li>
             <li><a href="/epaper" style={{ color: '#fff', fontWeight: 700 }}>📰 {t('ePaper')}</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>{lang === 'en' ? 'Group Publications' : 'குழும இதழ்கள்'}</h4>
-          <ul>
-            <li><a href="#">{lang === 'en' ? 'Murasu Weekly' : 'முரசு வாரம்'}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Murasu Cinema' : 'முரசு சினிமா'}</a></li>
-            <li><a href="#">{lang === 'en' ? 'Murasu Children' : 'முரசு சிறுவர்'}</a></li>
-            <li><a href="#">Murasu Today</a></li>
-            <li><a href="#">{lang === 'en' ? 'Rare Books' : 'அரிய புத்தகங்கள்'}</a></li>
           </ul>
         </div>
       </div>

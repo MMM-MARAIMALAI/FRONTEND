@@ -115,7 +115,8 @@ table { max-width: 100%; }
 
   /* ---------- Masthead — shrink the right ad column so brand has room ---------- */
   .masthead-inner {
-    grid-template-columns: 1fr 2.2fr 1fr !important;
+    grid-template-columns: 1fr !important;
+    justify-content: center !important;
     gap: 14px !important;
     padding: 18px 22px 14px !important;
   }
@@ -1033,4 +1034,16 @@ table { max-width: 100%; }
 /* DESKTOP baseline */
 @media (min-width: 1025px) {
   /* baseline desktop — nothing to override */
+}
+
+/* ============================================================================
+   Advertise (விளம்பரம்) page — headline sizing on small screens.
+   The hero, stats, packages and ad-box grids already respond automatically
+   (flex-wrap + auto-fill minmax grids), so only the big <h1> needs scaling.
+============================================================================ */
+@media (max-width: 720px) {
+  .advertise-page h1 { font-size: 32px !important; line-height: 1.12 !important; }
+}
+@media (max-width: 480px) {
+  .advertise-page h1 { font-size: 26px !important; }
 }

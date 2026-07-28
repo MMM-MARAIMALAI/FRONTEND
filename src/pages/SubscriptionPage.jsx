@@ -35,6 +35,11 @@ const SVG_CHECK = (
 export default function SubscriptionPage() {
   const t = useT();
   const pc = usePageContent('subscription', {
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      hero: true, pricing: true, delivery: true, benefits: true,
+      gpay: true, contact: true, bottomCta: true
+    },
     kicker: 'வாரந்தோறும்... வாசல் தோறும்...',
     title: 'மறைமலை முரசு!',
     subtitle: 'தமிழ் வார இதழ்',
@@ -63,6 +68,9 @@ export default function SubscriptionPage() {
     phoneNumber: '94441 12294'
   });
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
+
   return (
     <div className="subscription-page" style={{ background: 'var(--bg)', minHeight: '100vh', padding: '32px 16px' }}>
       <div className="subscription-inner" style={{ maxWidth: '1100px', margin: '0 auto' }}>
@@ -75,6 +83,7 @@ export default function SubscriptionPage() {
         </div>
 
         {/* ── Hero Banner ─────────────────────────────────────── */}
+        {isOn('hero') && (
         <div className="sub-hero" style={{
           background: 'linear-gradient(135deg, var(--accent) 0%, #8B0000 100%)',
           color: '#fff',
@@ -140,8 +149,10 @@ export default function SubscriptionPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* ── Pricing Cards ───────────────────────────────────── */}
+        {isOn('pricing') && (
         <div className="sub-pricing-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
@@ -233,8 +244,10 @@ export default function SubscriptionPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* ── Delivery Description ─────────────────────────────── */}
+        {isOn('delivery') && (
         <div className="sub-delivery-box" style={{
           background: '#FFF8E7',
           border: '1px solid #F4D77F',
@@ -261,8 +274,10 @@ export default function SubscriptionPage() {
             {pc.deliveryDesc}
           </p>
         </div>
+        )}
 
         {/* ── Benefits Grid ────────────────────────────────────── */}
+        {isOn('benefits') && (
         <div className="sub-benefits-box" style={{
           background: '#fff',
           border: '1px solid var(--rule)',
@@ -320,8 +335,10 @@ export default function SubscriptionPage() {
             ))}
           </div>
         </div>
+        )}
 
         {/* ── GPay Number — Highlighted ────────────────────────── */}
+        {isOn('gpay') && (
         <div className="sub-gpay-box" style={{
           background: 'linear-gradient(135deg, #FFF 0%, #FFF8F8 100%)',
           border: '2px dashed var(--accent)',
@@ -368,8 +385,10 @@ export default function SubscriptionPage() {
             {t('subUpiNote')}
           </div>
         </div>
+        )}
 
         {/* ── Contact Information ──────────────────────────────── */}
+        {isOn('contact') && (
         <div className="sub-contact-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -452,8 +471,10 @@ export default function SubscriptionPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* ── Call to Action ──────────────────────────────────── */}
+        {isOn('bottomCta') && (
         <div className="sub-cta-panel" style={{
           background: 'var(--ink)',
           color: '#fff',
@@ -496,6 +517,7 @@ export default function SubscriptionPage() {
             {t('subCallNow')}
           </a>
         </div>
+        )}
 
       </div>
     </div>

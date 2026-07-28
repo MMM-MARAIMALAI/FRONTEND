@@ -4,6 +4,11 @@ import { usePageContent } from '../utils/pageContent.js';
 
 export default function ArticlePage() {
   const pc = usePageContent('article', {
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      breadcrumb: true, header: true, featuredMedia: true, body: true,
+      pullQuote: true, tags: true, related: true
+    },
     breadcrumb: [
       { label: 'முகப்பு', link: '/' },
       { label: 'அரசியல்', link: '/category' },
@@ -27,66 +32,80 @@ export default function ArticlePage() {
     relatedHead: 'தொடர்புடைய செய்திகள்'
   });
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
   const breadcrumb = pc.breadcrumb || [];
   const tags = pc.tags || [];
   const content = pc.content || [];
 
   return (
     <div className="article-page">
-      <div className="article-breadcrumb">
-        {breadcrumb.map((b, i) => (
-          <React.Fragment key={i}>
-            {b.link ? <a href={b.link}>{b.label}</a> : <span>{b.label}</span>}
-            {i < breadcrumb.length - 1 ? ' › ' : ''}
-          </React.Fragment>
-        ))}
-      </div>
-
-      <header className="article-header">
-        <h1 className="article-title">{pc.title}</h1>
-        <h2 className="article-subtitle">{pc.subtitle}</h2>
-        <div className="article-meta">
-          <span className="article-author">எழுதியவர்: {pc.author}</span>
-          <span className="article-date">{pc.date}</span>
-        </div>
-      </header>
-
-      <figure className="article-featured-media">
-        <img src={pc.image} alt={pc.title} />
-        <figcaption className="article-caption">{pc.caption}</figcaption>
-      </figure>
-
-      <div className="article-body">
-        {content.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
-
-        {pc.pullQuote && (
-          <div className="article-quote">{pc.pullQuote}</div>
-        )}
-
-        {pc.closing && (
-          <p>{pc.closing}</p>
-        )}
-      </div>
-
-      <div className="article-tags">
-        {tags.map((tag, i) => (
-          <a href="/category" className="article-tag" key={i}>{tag}</a>
-        ))}
-      </div>
-
-      <section className="article-related">
-        <h3>{pc.relatedHead}</h3>
-        <div className="article-related-grid">
-          {TOP_STORIES.slice(1).map((story, i) => (
-            <a href="/article" className="related-card" key={i}>
-              <img src={story.img} alt={story.title} />
-              <h4>{story.title}</h4>
-            </a>
+      {isOn('breadcrumb') && (
+        <div className="article-breadcrumb">
+          {breadcrumb.map((b, i) => (
+            <React.Fragment key={i}>
+              {b.link ? <a href={b.link}>{b.label}</a> : <span>{b.label}</span>}
+              {i < breadcrumb.length - 1 ? ' › ' : ''}
+            </React.Fragment>
           ))}
         </div>
-      </section>
+      )}
+
+      {isOn('header') && (
+        <header className="article-header">
+          <h1 className="article-title">{pc.title}</h1>
+          <h2 className="article-subtitle">{pc.subtitle}</h2>
+          <div className="article-meta">
+            <span className="article-author">எழுதியவர்: {pc.author}</span>
+            <span className="article-date">{pc.date}</span>
+          </div>
+        </header>
+      )}
+
+      {isOn('featuredMedia') && (
+        <figure className="article-featured-media">
+          <img src={pc.image} alt={pc.title} />
+          <figcaption className="article-caption">{pc.caption}</figcaption>
+        </figure>
+      )}
+
+      {isOn('body') && (
+        <div className="article-body">
+          {content.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+
+          {isOn('pullQuote') && pc.pullQuote && (
+            <div className="article-quote">{pc.pullQuote}</div>
+          )}
+
+          {pc.closing && (
+            <p>{pc.closing}</p>
+          )}
+        </div>
+      )}
+
+      {isOn('tags') && (
+        <div className="article-tags">
+          {tags.map((tag, i) => (
+            <a href="/category" className="article-tag" key={i}>{tag}</a>
+          ))}
+        </div>
+      )}
+
+      {isOn('related') && (
+        <section className="article-related">
+          <h3>{pc.relatedHead}</h3>
+          <div className="article-related-grid">
+            {TOP_STORIES.slice(1).map((story, i) => (
+              <a href="/article" className="related-card" key={i}>
+                <img src={story.img} alt={story.title} />
+                <h4>{story.title}</h4>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

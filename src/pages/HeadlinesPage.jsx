@@ -15,6 +15,13 @@ export default function HeadlinesPage() {
       { num: '76', label: 'எண்ணம்' },
       { num: '42', label: 'நாட்கள் முதல்' }
     ],
+    // Section visibility toggles — admin can hide any section
+    sections: {
+      featured: true, secondary: true, inlineAd2: true, newsletterMain: true,
+      leaderboard: true, stream: true, midAd: true, inlineAd3: true,
+      photoStory: true, bottomCta: true, mostRead: true, opinion: true,
+      markets: true, railNewsletter: true, sidebarAds: true
+    },
     featured: {
       cat: 'முதல்வரை செய்',
       img: '',
@@ -129,6 +136,8 @@ export default function HeadlinesPage() {
     return () => window.removeEventListener('storage', onChange);
   }, []);
 
+  const sec = pc.sections || {};
+  const isOn = (key) => sec[key] !== false;
   const featured = pc.featured || {};
   const stats = pc.stats || [];
   const secondary = pc.secondary || [];
@@ -170,6 +179,7 @@ export default function HeadlinesPage() {
         {/* LEFT */}
         <div className="law-main">
           {/* FEATURED */}
+          {isOn('featured') && (
           <div className="law-hero">
             <a href={resolveLink(featured)} className="law-hero-image" style={{ background: featured.img ? `url(${featured.img}) center/cover no-repeat` : stripe }}>
               {featured.img && <img src={featured.img} alt={featured.title} />}
@@ -191,8 +201,10 @@ export default function HeadlinesPage() {
               <div className="law-meta">{featured.meta}</div>
             </div>
           </div>
+          )}
 
           {/* SECONDARY (2 cards side by side) */}
+          {isOn('secondary') && (
           <div className="law-secondary">
             {secondary.map((article, idx) => (
               <a
@@ -215,17 +227,20 @@ export default function HeadlinesPage() {
               </a>
             ))}
           </div>
+          )}
 
           {/* INLINE AD #2 — between secondary cards and newsletter */}
+          {isOn('inlineAd2') && (
           <div style={{ margin: '20px 0' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px' }}>
               விளம்பரம் · SPONSORED
             </div>
             <AdSlot network="sponsor" size="970x350" slotId="headlines-inline-2" note="In-feed Billboard · 970 × 350" style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* MAIN NEWSLETTER BANNER */}
-          {newsletterMain && newsletterMain.title && (
+          {isOn('newsletterMain') && newsletterMain && newsletterMain.title && (
             <div style={{ background: '#F5F1E8', border: '1px solid var(--rule)', borderRadius: '8px', padding: '24px 28px', margin: '24px 0', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px', alignItems: 'center' }}>
               <div>
                 <h3 style={{ margin: '0 0 6px 0', fontFamily: 'var(--serif)', fontSize: '20px', fontWeight: 700, color: 'var(--ink)' }}>{newsletterMain.title}</h3>
@@ -239,6 +254,7 @@ export default function HeadlinesPage() {
           )}
 
           {/* LEADERBOARD AD — uses per-slot upload from Admin → Ad Manager */}
+          {isOn('leaderboard') && (
           <div style={{ borderTop: '3px solid var(--accent)', borderBottom: '3px solid var(--accent)', padding: '18px 0', margin: '24px 0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase' }}>
               <span>{pc.leaderboardLabel}</span>
@@ -246,8 +262,10 @@ export default function HeadlinesPage() {
             </div>
             <AdSlot network="sponsor" size="970x350" slotId="headlines-leaderboard" note={pc.leaderboardText || 'Brand Lockup · Tall Billboard'} style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* SECTION HEAD */}
+          {isOn('stream') && (
           <div className="law-section-head">
             <h2>
               {pc.sectionHead}
@@ -255,8 +273,10 @@ export default function HeadlinesPage() {
             </h2>
             <div className="law-more">{pc.sectionMore}</div>
           </div>
+          )}
 
           {/* STREAM */}
+          {isOn('stream') && (
           <div className="law-stream">
             <ul className="law-stream-list">
               {streamItems.slice(0, 10).map((article, idx) => (
@@ -275,25 +295,30 @@ export default function HeadlinesPage() {
             </ul>
             <button className="law-loadmore">{pc.loadMore}</button>
           </div>
+          )}
 
           {/* MID AD — uses per-slot upload from Admin → Ad Manager */}
+          {isOn('midAd') && (
           <div style={{ margin: '24px 0' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px' }}>
               {pc.midAdLabel}
             </div>
             <AdSlot network="sponsor" size="970x350" slotId="headlines-mid-ad" note={pc.midAdText || 'Brand lockup · Tall Billboard 970 × 350'} style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* INLINE AD #3 — extra mid-feed unit */}
+          {isOn('inlineAd3') && (
           <div style={{ margin: '24px 0' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px' }}>
               விளம்பரம் · SPONSORED
             </div>
             <AdSlot network="sponsor" size="970x350" slotId="headlines-inline-3" note="In-feed Billboard · 970 × 350" style={{ maxWidth: '100%' }} />
           </div>
+          )}
 
           {/* PHOTO STORY — now with tall ad box on the right side */}
-          {photoStory.length > 0 && (
+          {isOn('photoStory') && photoStory.length > 0 && (
             <section style={{ marginTop: '32px' }}>
               <div className="law-section-head" style={{ marginBottom: '20px' }}>
                 <h2>{pc.photoStoryHead}<span className="law-live-dot"></span></h2>
@@ -343,7 +368,7 @@ export default function HeadlinesPage() {
           )}
 
           {/* BOTTOM CTA (உங்கள் வணிகம்) */}
-          {bottomCta && bottomCta.title && (
+          {isOn('bottomCta') && bottomCta && bottomCta.title && (
             <section style={{ marginTop: '32px', borderTop: '3px solid var(--accent)', borderBottom: '3px solid var(--accent)', padding: '20px 0' }}>
               <div style={{ display: 'inline-block', background: 'var(--accent)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '4px 12px', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '14px' }}>
                 {bottomCta.sponsored}
@@ -380,7 +405,7 @@ export default function HeadlinesPage() {
         {/* ============ RIGHT SIDEBAR ============ */}
         <aside className="law-sidebar">
           {/* MOST READ */}
-          {mostRead.length > 0 && (
+          {isOn('mostRead') && mostRead.length > 0 && (
             <div className="law-sidebar-block">
               <div className="law-sidebar-head">{pc.mostReadHead}</div>
               <ol className="law-most-read">
@@ -397,7 +422,7 @@ export default function HeadlinesPage() {
           )}
 
           {/* OPINION / EDITORIAL */}
-          {opinionItems.length > 0 && (
+          {isOn('opinion') && opinionItems.length > 0 && (
             <div className="law-sidebar-block">
               <div className="law-sidebar-head">{pc.opinionHead}</div>
               <ul style={{ listStyle: 'none', margin: 0, padding: '14px 18px' }}>
@@ -413,7 +438,7 @@ export default function HeadlinesPage() {
           )}
 
           {/* MARKETS */}
-          {markets.length > 0 && (
+          {isOn('markets') && markets.length > 0 && (
             <div className="law-sidebar-block">
               <div className="law-sidebar-head">{pc.marketsHead}</div>
               <ul style={{ listStyle: 'none', margin: 0, padding: '8px 18px 14px' }}>
@@ -431,7 +456,7 @@ export default function HeadlinesPage() {
           )}
 
           {/* RAIL NEWSLETTER */}
-          {railNewsletter && railNewsletter.head && (
+          {isOn('railNewsletter') && railNewsletter && railNewsletter.head && (
             <div className="law-sidebar-block">
               <div className="law-sidebar-head">{railNewsletter.head}</div>
               <div style={{ padding: '14px 18px 18px' }}>
@@ -444,6 +469,8 @@ export default function HeadlinesPage() {
             </div>
           )}
 
+          {isOn('sidebarAds') && (
+          <>
           {/* SIDE AD (300 x 600) — primary sidebar slot */}
           <div className="law-sidebar-block" style={{ padding: '14px 18px' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.18em', color: 'var(--ink-3)', fontFamily: 'var(--sans)', textTransform: 'uppercase', marginBottom: '8px' }}>
@@ -491,6 +518,8 @@ export default function HeadlinesPage() {
             </div>
             <AdSlot network="sponsor" size="300x250" slotId="headlines-sidebar-6" note="MPU · 300 × 250" style={{ maxWidth: '100%' }} />
           </div>
+          </>
+          )}
         </aside>
       </div>
     </div>
