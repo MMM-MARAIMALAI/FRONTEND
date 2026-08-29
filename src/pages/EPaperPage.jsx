@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PdfViewer from '../components/PdfViewer.jsx';
 import { resolvePdfUrl, toEmbeddablePdfUrl } from '../utils/pdfStorage.js';
+import { normalizeImageUrl } from '../utils/imageUrl.js';
 
 /*
   ePaper page (செய்தித்தாள்கள்) — grid of weekly newspaper PDFs.
@@ -82,7 +83,7 @@ export default function EPaperPage() {
   // Newspaper diagonal pattern for hero background (used when no image uploaded)
   const newsPattern = 'repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 18px), linear-gradient(135deg, #2a3a4a 0%, #1f2a35 100%)';
   const heroBg = pageContent.heroBgImage
-    ? `linear-gradient(135deg, rgba(20,30,40,0.75) 0%, rgba(15,25,35,0.85) 100%), url(${pageContent.heroBgImage}) center/cover no-repeat`
+    ? `linear-gradient(135deg, rgba(20,30,40,0.75) 0%, rgba(15,25,35,0.85) 100%), url(${normalizeImageUrl(pageContent.heroBgImage)}) center/cover no-repeat`
     : newsPattern;
 
   return (
@@ -119,7 +120,7 @@ export default function EPaperPage() {
                 onClick={() => openPaper(p)}
                 style={{ border: 0, padding: 0, background: 'transparent', cursor: (p.pdfKey || (p.pdfUrl && String(p.pdfUrl).trim())) ? 'pointer' : 'default', display: 'block' }}
               >
-                <div style={{ width: '100%', aspectRatio: '3/4', background: p.thumb ? `url(${p.thumb}) center/cover no-repeat` : '#FAFAF7', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', borderBottom: '1px solid #E5E7EB' }}>
+                <div style={{ width: '100%', aspectRatio: '3/4', background: p.thumb ? `url(${normalizeImageUrl(p.thumb)}) center/cover no-repeat` : '#FAFAF7', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', borderBottom: '1px solid #E5E7EB' }}>
                   {!p.thumb && (
                     <div style={{ textAlign: 'center', color: '#9CA3AF', fontFamily: 'var(--mono)', fontSize: '12px' }}>
                       <div style={{ fontSize: '48px', marginBottom: '8px' }}>📰</div>

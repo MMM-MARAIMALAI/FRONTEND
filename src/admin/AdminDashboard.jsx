@@ -5057,18 +5057,24 @@ export default function AdminDashboard({ onLogout }) {
 
                   {/* SECTION 3: PAPERS GRID */}
                   <SectionBlock secKey="papersGrid" icon="📰" title={`Newspaper Editions Grid (${(epaper.papers || []).length} cards)`}>
+                    {(epaper.papers || []).some((pp) => !(pp.thumb && String(pp.thumb).trim())) && (
+                      <div style={{ background: '#FFFBEB', border: '1px solid #FCD34D', borderRadius: '8px', padding: '10px 14px', marginBottom: '12px', fontSize: '12px', color: '#92400E', fontWeight: 600 }}>
+                        ⚠ {(epaper.papers || []).filter((pp) => !(pp.thumb && String(pp.thumb).trim())).length} edition(s) have no cover image. Paste a Google Drive image link in each edition's <strong>Edition Cover Image</strong> box.
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', padding: '10px 14px', background: 'var(--accent)', borderRadius: '6px' }}>
-                      <span style={{ fontSize: '12px', color: '#fff', fontWeight: '700' }}>Upload up to 8-9 weekly newspaper PDFs</span>
+                      <span style={{ fontSize: '12px', color: '#fff', fontWeight: '700' }}>Every edition needs a Google Drive cover image link + a PDF</span>
                       <button type="button" onClick={addPaper} style={{ padding: '7px 14px', background: '#fff', color: 'var(--accent)', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>+ Add Edition</button>
                     </div>
 
-                    {(epaper.papers || []).map((p, i) => { const hasPdf = !!(p.pdfKey || (p.pdfUrl && String(p.pdfUrl).trim())); return (
+                    {(epaper.papers || []).map((p, i) => { const hasPdf = !!(p.pdfKey || (p.pdfUrl && String(p.pdfUrl).trim())); const hasCover = !!(p.thumb && String(p.thumb).trim()); return (
                       <div key={i} style={{ padding: '16px', background: hasPdf ? '#F0FDF4' : '#F9FAFB', borderRadius: '8px', border: `1px solid ${hasPdf ? '#86EFAC' : '#E5E7EB'}`, marginBottom: '12px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--accent)', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>{i + 1}</span>
                             <strong style={{ fontSize: '13px', color: '#111827' }}>{p.title || 'Untitled Edition'}</strong>
                             {hasPdf && <span style={{ fontSize: '10px', padding: '2px 8px', background: '#059669', color: '#fff', borderRadius: '3px', fontWeight: 700 }}>✓ PDF READY</span>}
+                            {!hasCover && <span style={{ fontSize: '10px', padding: '2px 8px', background: '#F59E0B', color: '#fff', borderRadius: '3px', fontWeight: 700 }}>⚠ NO COVER</span>}
                           </div>
                           <button type="button" onClick={() => removePaper(i)} style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', cursor: 'pointer', fontSize: '11px', padding: '5px 10px', borderRadius: '4px', fontWeight: '700' }}>✕ Remove Edition</button>
                         </div>
@@ -5081,13 +5087,48 @@ export default function AdminDashboard({ onLogout }) {
                           <label style={{ display: 'block', marginBottom: '4px', fontSize: '11px', fontWeight: '600', color: '#374151' }}>Description (shown below title on card)</label>
                           <textarea rows="2" defaultValue={p.desc || ''} onBlur={(e) => updPaper(i, 'desc', e.target.value)} style={{ ...inputStyle, fontSize: '12px', padding: '7px 10px', resize: 'vertical' }} />
                         </div>
-                        <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-                          <input type="text" defaultValue={p.ctaText || ''} onBlur={(e) => updPaper(i, 'ctaText', e.target.value)} placeholder="CTA button text" style={{ ...inputStyle, fontSize: '12px', padding: '6px 10px', flex: 1 }} />
-                          <input type="text" defaultValue={p.thumb || ''} onBlur={(e) => updPaper(i, 'thumb', e.target.value)} placeholder="Cover image URL (optional)" style={{ ...inputStyle, fontSize: '12px', padding: '6px 10px', flex: 2 }} />
-                          <label style={{ padding: '6px 12px', background: '#F3F4F6', border: '1px solid #D1D5DB', color: '#374151', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: '600' }}>
-                            Cover Upload
-                            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={imgUp((r) => updPaper(i, 'thumb', r))} />
-                          </label>
+                        <div style={{ marginBottom: '10px' }}>
+                          <label style={{ display: 'block', marginBottom: '4px', fontSize: '11px', fontWeight: '600', color: '#374151' }}>CTA button text</label>
+                          <input type="text" defaultValue={p.ctaText || ''} onBlur={(e) => updPaper(i, 'ctaText', e.target.value)} placeholder="செய்திகள்" style={{ ...inputStyle, fontSize: '12px', padding: '6px 10px' }} />
+                        </div>
+
+                        {/* Edition Cover Image — Google Drive image link (required for every edition) */}
+                        <div style={{ padding: '12px', background: '#fff', borderRadius: '6px', border: `2px dashed ${hasCover ? '#1A73E8' : '#F59E0B'}`, marginBottom: '10px' }}>
+                          <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, color: '#1A73E8' }}>🖼 Edition Cover Image — paste a Google Drive image link (required)</label>
+                          <input
+                            type="text"
+                            defaultValue={p.thumb || ''}
+                            onBlur={(e) => updPaper(i, 'thumb', normalizeImageUrlAdmin(e.target.value.trim()))}
+                            placeholder="https://drive.google.com/file/d/FILE_ID/view?usp=sharing"
+                            style={{ ...inputStyle, fontSize: '12px', padding: '7px 10px' }}
+                          />
+                          <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#6B7280' }}>
+                            Upload the cover image to Google Drive, set it to <strong>"Anyone with the link can view"</strong>, then paste the share link here — it is converted to a direct image link automatically.
+                          </p>
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
+                            <button type="button" onClick={() => openMediaPicker((url) => updPaper(i, 'thumb', normalizeImageUrlAdmin(url)))} style={{ padding: '6px 10px', background: '#F3F4F6', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>📁 Browse Media</button>
+                            <label style={{ padding: '6px 12px', background: '#F3F4F6', border: '1px solid #D1D5DB', color: '#374151', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
+                              ⬆ Upload instead
+                              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={imgUp((r) => updPaper(i, 'thumb', r))} />
+                            </label>
+                            {hasCover && (
+                              <button type="button" onClick={() => updPaper(i, 'thumb', '')} style={{ padding: '6px 10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', cursor: 'pointer', fontSize: '11px', borderRadius: '4px', fontWeight: 700 }}>Remove cover</button>
+                            )}
+                          </div>
+                          {hasCover ? (
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '10px' }}>
+                              <img
+                                src={normalizeImageUrlAdmin(p.thumb)}
+                                alt=""
+                                onError={(e) => { e.currentTarget.style.display = 'none'; const warn = e.currentTarget.parentNode.querySelector('[data-cover-warn]'); if (warn) warn.style.display = 'block'; }}
+                                style={{ width: '72px', height: '96px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #E5E7EB', background: '#F3F4F6' }}
+                              />
+                              <span data-cover-warn style={{ display: 'none', fontSize: '11px', color: '#B45309', fontWeight: 700 }}>⚠ Image did not load — make sure the Drive file is shared as "Anyone with the link can view".</span>
+                              <span style={{ fontSize: '11px', color: '#059669', fontWeight: 700 }}>✓ Cover set — shown on the /epaper card</span>
+                            </div>
+                          ) : (
+                            <p style={{ margin: '10px 0 0', fontSize: '11px', color: '#B45309', fontWeight: 700 }}>⚠ No cover image yet — this edition shows a plain 📰 placeholder on /epaper.</p>
+                          )}
                         </div>
 
                         {/* PDF Upload */}
